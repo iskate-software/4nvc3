@@ -2,10 +2,10 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_INVENTORY = "SELECT * FROM ARINVT WHERE SEQ LIKE '$_GET[seq]%' ORDER BY SEQ, DESCRIP";
-$INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
-$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
+$INVENTORY = mysqli_query($tryconnection, $query_INVENTORY) or die(mysqli_error($mysqli_link));
+$row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 
 
@@ -240,7 +240,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
   echo'</td>
     <td class="Verdana12">___ ___ ___ ___ ___ ___ ___ ___ ___</td>
   </tr>';
-	} while ($row_INVENTORY = mysql_fetch_assoc($INVENTORY));  
+	} while ($row_INVENTORY = mysqli_fetch_assoc($INVENTORY));  
   ?>
   
 </table>

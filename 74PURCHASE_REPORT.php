@@ -1,7 +1,7 @@
 <?php
 session_start() ;
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 // get the appropriate dates 
 
@@ -13,10 +13,10 @@ $startdate='00/00/0000';
 }
 $stdum = $startdate ;
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate1="SELECT STR_TO_DATE('$startdate','%m/%d/%Y') AS STARTDATE";
-$startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
-$startdate3=mysql_fetch_array($startdate2);
+$startdate2=mysqli_query($tryconnection, $startdate1) or die(mysqli_error($mysqli_link));
+$startdate3=mysqli_fetch_array($startdate2);
 $startdate = $startdate3['STARTDATE'] ;
 // echo ' Starting ' . $startdate ;
 if (!empty($_GET['enddate'])){
@@ -28,8 +28,8 @@ $enddate=date('m/d/Y');
 $enddum = $enddate ;
 //echo ' Ending ' . $enddum ;
 $enddate1="SELECT STR_TO_DATE('$enddate','%m/%d/%Y') AS ENDDATE";
-$enddate2=mysql_query($enddate1, $tryconnection) or die(mysql_error());
-$enddate3=mysql_fetch_array($enddate2);
+$enddate2=mysqli_query($tryconnection, $enddate1) or die(mysqli_error($mysqli_link));
+$enddate3=mysqli_fetch_array($enddate2);
 $enddate = $enddate3['ENDDATE'] ;
 
 // and figure the number of days between them.
@@ -39,7 +39,7 @@ $num_days = ceil(abs(strtotime($enddate) - strtotime($startdate))/86400 ) + 1;
 
 $query_DRUGS = "SELECT ITEM,DATEPURCH,QTY FROM NARCPUR WHERE DATEPURCH >= '$startdate' AND DATEPURCH <= '$enddate' 
 ORDER BY ITEM, DATEPURCH" ;
-$GET_DRUGS = mysql_query($query_DRUGS, $tryconnection) or die(mysql_error()) ;
+$GET_DRUGS = mysqli_query($tryconnection, $query_DRUGS) or die(mysqli_error($mysqli_link)) ;
 //echo ' Done ' ;
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/DVMBasicTemplate.dwt" codeOutsideHTMLIsLocked="false" -->
@@ -230,7 +230,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     
   </tr>';
   }
-  while ($row_DRUG=mysql_fetch_assoc($GET_DRUGS));
+  while ($row_DRUG=mysqli_fetch_assoc($GET_DRUGS));
   
   ?>
   

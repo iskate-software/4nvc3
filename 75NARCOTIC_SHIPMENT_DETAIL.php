@@ -1,7 +1,7 @@
 <?php 
 session_start();
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $descrip = $_GET['descrip'] ;
 $item = $_GET['itemid'] ;
@@ -9,15 +9,15 @@ $vencode = $_GET['vencode'] ;
 
 
 $check_qty = "SELECT SUM(QTYREM) AS QTYREM FROM NARCPUR WHERE ITEM = '$item'" ;
-$get_qty = mysql_query($check_qty, $tryconnection) or die(mysql_error()) ;
-$row_Narc = mysql_fetch_assoc($get_qty) ;
+$get_qty = mysqli_query($tryconnection, $check_qty) or die(mysqli_error($mysqli_link)) ;
+$row_Narc = mysqli_fetch_assoc($get_qty) ;
 $qtyrem = $row_Narc['QTYREM'] ;
 $_SESSION['available'] = $qtyrem ;
 
 
 $check_date = "SELECT DATEPURCH, DATE_FORMAT(DATEPURCH,'%m/%d/%Y') AS DATEPUR FROM NARCPUR WHERE ITEM = '$item' ORDER BY DATEPURCH DESC LIMIT 1" ;
-$get_date = mysql_query($check_date, $tryconnection) or die(mysql_error()) ;
-$row_DNarc = mysql_fetch_assoc($get_date) ;
+$get_date = mysqli_query($tryconnection, $check_date) or die(mysqli_error($mysqli_link)) ;
+$row_DNarc = mysqli_fetch_assoc($get_date) ;
 $lastpur = $row_DNarc['DATEPURCH'] ;
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

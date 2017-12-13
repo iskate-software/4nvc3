@@ -11,55 +11,55 @@ $minbal = $_GET['minbal'] ;
 $minchg = $_GET['minsvchg'] ;
 
 $scdate1="SELECT STR_TO_DATE('$scdate','%m/%d/%Y')";
-$scdate2=mysql_query($scdate1, $tryconnection) or die(mysql_error());
-$scdate3=mysql_fetch_array($scdate2);
+$scdate2=mysqli_query($tryconnection, $scdate1) or die(mysqli_error($mysqli_link));
+$scdate3=mysqli_fetch_array($scdate2);
                                       
 $invdte1="SELECT STR_TO_DATE('$invdate','%m/%d/%Y')";
-$invdte2=mysql_query($invdte1, $tryconnection) or die(mysql_error());
-$invdte3=mysql_fetch_array($invdte2);
+$invdte2=mysqli_query($tryconnection, $invdte1) or die(mysqli_error($mysqli_link));
+$invdte3=mysqli_fetch_array($invdte2);
 
 $SC0 = "DROP TEMPORARY TABLE IF EXISTS SC1" ;
-$SC0A = mysql_query($SC0, $tryconnection) or die(mysql_error()) ;
+$SC0A = mysqli_query($tryconnection, $SC0) or die(mysqli_error($mysqli_link)) ;
 
 $SC00 = "DROP TEMPORARY TABLE IF EXISTS SC2" ;
-$SC00A = mysql_query($SC00, $tryconnection) or die(mysql_error()) ;
+$SC00A = mysqli_query($tryconnection, $SC00) or die(mysqli_error($mysqli_link)) ;
 
 $SC1 = "CREATE TEMPORARY TABLE SC1 LIKE ARARECV" ;
-$SC1A = mysql_query($SC1, $tryconnection) or die(mysql_error()) ;
+$SC1A = mysqli_query($tryconnection, $SC1) or die(mysqli_error($mysqli_link)) ;
 
 $SC2 = "ALTER TABLE SC1 DROP COLUMN UNIQUE1" ;
-$SC2A = mysql_query($SC2, $tryconnection) or die(mysql_error()) ;
+$SC2A = mysqli_query($tryconnection, $SC2) or die(mysqli_error($mysqli_link)) ;
 
 $SC3 = "INSERT INTO SC1 (CUSTNO,COMPANY,INVNO,INVDTE,IBAL) SELECT CUSTNO, COMPANY,INVNO,INVDTE,IBAL FROM ARARECV WHERE INVDTE <= '$scdate3[0]' ";
-$SC3A = mysql_query($SC3, $tryconnection) or die(mysql_error()) ;
+$SC3A = mysqli_query($tryconnection, $SC3) or die(mysqli_error($mysqli_link)) ;
 
 $SC4 = "DELETE FROM SC1 WHERE IBAL = 0"  ;
-$SC4A = mysql_query($SC4, $tryconnection) or die(mysql_error()) ;
+$SC4A = mysqli_query($tryconnection, $SC4) or die(mysqli_error($mysqli_link)) ;
 
 $SC5 = "CREATE TEMPORARY TABLE SC2 LIKE SC1" ;
-$SC5A = mysql_query($SC5, $tryconnection) or die(mysql_error()) ;
+$SC5A = mysqli_query($tryconnection, $SC5) or die(mysqli_error($mysqli_link)) ;
 
 $SC6 = "INSERT INTO SC2 (CUSTNO,COMPANY,IBAL) SELECT CUSTNO,COMPANY,SUM(IBAL) FROM SC1 GROUP BY CUSTNO" ;
-$SC6A = mysql_query($SC6, $tryconnection) or die(mysql_error()) ;
+$SC6A = mysqli_query($tryconnection, $SC6) or die(mysqli_error($mysqli_link)) ;
 
 $SC7 = "UPDATE SC2 JOIN ARCUSTO ON (SC2.CUSTNO = ARCUSTO.CUSTNO) SET IBAL = 0 WHERE ARCUSTO.SVC = 0" ;
-$SC7A = mysql_query($SC7, $tryconnection) or die(mysql_error()) ;
+$SC7A = mysqli_query($tryconnection, $SC7) or die(mysqli_error($mysqli_link)) ;
 
 $SC8 = "DELETE FROM SC2 WHERE IBAL < '$minbal' ";
-$SC8A = mysql_query($SC8, $tryconnection) or die(mysql_error()) ;
+$SC8A = mysqli_query($tryconnection, $SC8) or die(mysqli_error($mysqli_link)) ;
 
 $SC9 = "UPDATE SC2 SET IBAL = IBAL * ('$svpct'/100.00) ";
-$SC9A = mysql_query($SC9, $tryconnection) or die(mysql_error()) ;
+$SC9A = mysqli_query($tryconnection, $SC9) or die(mysqli_error($mysqli_link)) ;
 
 $SC10 = "UPDATE SC2 SET IBAL = '$minchg' WHERE IBAL < '$minchg' ";
-$SC10A = mysql_query($SC10, $tryconnection) or die(mysql_error()) ;
+$SC10A = mysqli_query($tryconnection, $SC10) or die(mysqli_error($mysqli_link)) ;
 
 $SC11 = "UPDATE SC2 SET INVNO = '0000',INVDTE = '$invdte3[0]', PONUM = 'SERVICE CHARGE', TAX = 0, PTAX = 0,  AMTPAID = 0,  DISCOUNT = 0,  REFNO = ' ', SALESMN = ' ', DTEPAID = '0000-00-00',  ITOTAL = IBAL" ;
-$SC11A = mysql_query($SC11, $tryconnection) or die(mysql_error()) ;
+$SC11A = mysqli_query($tryconnection, $SC11) or die(mysqli_error($mysqli_link)) ;
 
 $SC15 = "SELECT SUM(IBAL) AS IBAL FROM SC2" ;
-$SC15A = mysql_query($SC15, $tryconnection) or die(mysql_error()) ;
-$row_SC15B = mysql_fetch_assoc($SC15A) ;
+$SC15A = mysqli_query($tryconnection, $SC15) or die(mysqli_error($mysqli_link)) ;
+$row_SC15B = mysqli_fetch_assoc($SC15A) ;
 $sctot = $row_SC15B['IBAL'] ;
 
 $search_ARINVOI="SELECT INVNO,SC2.CUSTNO,CONCAT(ARCUSTO.COMPANY,', ',ARCUSTO.CONTACT) AS 'COMPANY', DATE_FORMAT(INVDTE, '%m/%d/%Y') AS 'INVDTE',ITOTAL,TAX,AMTPAID,IBAL FROM SC2 JOIN ARCUSTO ON (SC2.CUSTNO = ARCUSTO.CUSTNO) ORDER BY ARCUSTO.COMPANY,CONTACT ASC";
@@ -67,45 +67,45 @@ $search_NET = "SELECT SUM(ITOTAL - PTAX - TAX) AS Total_NET FROM SC2";
 $search_TAX = "SELECT SUM(TAX) AS Total_TAX FROM SC2";
 $search_PST = "SELECT SUM(PTAX) AS Total_PST FROM SC2";
 
-$ARINVOI=mysql_query($search_ARINVOI, $tryconnection ) or die(mysql_error());
-$row_ARINVOI=mysql_fetch_assoc($ARINVOI);
+$ARINVOI=mysqli_query($tryconnection, $search_ARINVOI) or die(mysqli_error($mysqli_link));
+$row_ARINVOI=mysqli_fetch_assoc($ARINVOI);
 
-$NET = mysql_query($search_NET, $tryconnection ) or die(mysql_error()) ;
-$TAX = mysql_query($search_TAX, $tryconnection ) or die(mysql_error()) ;
-$PST = mysql_query($search_PST, $tryconnection ) or die(mysql_error()) ;
+$NET = mysqli_query($tryconnection, $search_NET) or die(mysqli_error($mysqli_link)) ;
+$TAX = mysqli_query($tryconnection, $search_TAX) or die(mysqli_error($mysqli_link)) ;
+$PST = mysqli_query($tryconnection, $search_PST) or die(mysqli_error($mysqli_link)) ;
 
-$row_NET = mysql_fetch_array($NET) ;
-$row_TAX = mysql_fetch_array($TAX) ;
-$row_PST = mysql_fetch_array($PST) ;
+$row_NET = mysqli_fetch_array($NET) ;
+$row_TAX = mysqli_fetch_array($TAX) ;
+$row_PST = mysqli_fetch_array($PST) ;
 
 $totalsc = $row_NET + $row_TAX + $row_PST ;
 
 $SCCHECK = "SELECT COUNT(INVNO) AS INVNO FROM ARARECV WHERE INVNO = '0000' AND INVDTE = '$invdte3[0]' AND IBAL > 0" ;
-$get_check=mysql_query($SCCHECK, $tryconnection) or die(mysql_error()) ;
-$row_SCCHECK = mysql_fetch_assoc($get_check) ;
+$get_check=mysqli_query($tryconnection, $SCCHECK) or die(mysqli_error($mysqli_link)) ;
+$row_SCCHECK = mysqli_fetch_assoc($get_check) ;
 $check = $row_SCCHECK['INVNO'] ;
 
 if ($check[0] == 0 ) {
 $SC12 = "INSERT INTO ARARECV (INVNO,INVDTE,INVTIME,CUSTNO,COMPANY,SALESMN, PONUM,REFNO, DTEPAID,TAX,PTAX,ITOTAL,DISCOUNT,AMTPAID,IBAL,DATETIME)
  SELECT INVNO,INVDTE,INVTIME,CUSTNO,COMPANY,SALESMN, PONUM,REFNO, DTEPAID,TAX,PTAX,ITOTAL,DISCOUNT,AMTPAID,IBAL,DATETIME FROM SC2 ";
-$SC12A = mysql_query($SC12, $tryconnection) or die(mysql_error()) ;
+$SC12A = mysqli_query($tryconnection, $SC12) or die(mysqli_error($mysqli_link)) ;
 
 $SC13 = "INSERT INTO ARINVOI (INVNO,INVDTE,INVTIME,CUSTNO,COMPANY, SALESMN,PONUM,REFNO,DTEPAID,TAX,PTAX,ITOTAL,DISCOUNT,AMTPAID,DATETIME) SELECT INVNO,INVDTE,INVTIME,CUSTNO, COMPANY,SALESMN,PONUM,REFNO,DTEPAID,TAX,PTAX,ITOTAL,DISCOUNT,AMTPAID,DATETIME FROM SC2" ;
-$SC13A = mysql_query($SC13, $tryconnection) or die(mysql_error()) ;
+$SC13A = mysqli_query($tryconnection, $SC13) or die(mysqli_error($mysqli_link)) ;
 
 $SC14 = "UPDATE ARINVOI JOIN ARARECV ON (ARINVOI.INVNO = ARARECV.INVNO AND ARINVOI.CUSTNO = ARARECV.CUSTNO AND ARINVOI.INVDTE = ARARECV.INVDTE) SET ARINVOI.UNIQUE1 = ARARECV.UNIQUE1 ";
-$SC14A = mysql_query($SC14, $tryconnection) or die(mysql_error()) ;
+$SC14A = mysqli_query($tryconnection, $SC14) or die(mysqli_error($mysqli_link)) ;
 
 $SC17="UPDATE ARCUSTO JOIN SC2 ON SC2.CUSTNO = ARCUSTO.CUSTNO SET ARCUSTO.BALANCE = ARCUSTO.BALANCE + SC2.ITOTAL";
-$SC17A=mysql_query($SC17, $tryconnection) or die(mysql_error()) ;
+$SC17A=mysqli_query($tryconnection, $SC17) or die(mysqli_error($mysqli_link)) ;
 
 $SC16 = "INSERT INTO SALESCAT SET INVNO = '0000', INVDTE = '$invdte3[0]',INVMAJ = 98, INVREVCAT = 98, INVDECLINE = 0, INVTOT = '$totalsc[0]' ";
-$SC16A = mysql_query($SC16, $tryconnection) or die(mysql_error()) ;
+$SC16A = mysqli_query($tryconnection, $SC16) or die(mysqli_error($mysqli_link)) ;
 }
 else {
 $SCCHECK1 = "SELECT SUM(IBAL) AS IBAL FROM ARARECV WHERE INVNO = '0000' AND INVDTE = '$invdte3[0]' AND IBAL > 0" ;
-$get_check1=mysql_query($SCCHECK1, $tryconnection) or die(mysql_error()) ;
-$row_SCCHECK1 = mysql_fetch_assoc($get_check1) ;
+$get_check1=mysqli_query($tryconnection, $SCCHECK1) or die(mysqli_error($mysqli_link)) ;
+$row_SCCHECK1 = mysqli_fetch_assoc($get_check1) ;
 $totalbilled = $row_SCCHECK1['IBAL'] ;
 }
 
@@ -309,7 +309,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <td width="65" align="right" class="Verdana13">'.$row_ARINVOI['AMTPAID'].'</td>
   </tr>';
   }
-  while ($row_ARINVOI=mysql_fetch_assoc($ARINVOI));
+  while ($row_ARINVOI=mysqli_fetch_assoc($ARINVOI));
   } else {
   echo '<br /><br /><br /><tr><td class="Verdana13BRed" align="center">'.' There are already '.$check[0] . '  invoices for this date, totalling ' . $totalbilled[0] .'</td></tr>' ;
   echo '<tr> <td &nbsp; ></td></tr> ' ;

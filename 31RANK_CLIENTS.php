@@ -4,15 +4,15 @@ unset($_SESSION['company']);
 
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $query_Doctor = "SELECT DOCTOR, SHORTDOC, SIGNEDIN, PRIORITY FROM DOCTOR WHERE SIGNEDIN = 1 AND SCHEDULE = 1 AND PRIORITY <> 99  ORDER BY PRIORITY ";
-$Doctor = mysql_query($query_Doctor, $tryconnection) or die(mysql_error());
+$Doctor = mysqli_query($tryconnection, $query_Doctor) or die(mysqli_error($mysqli_link));
 
 $docss = array() ;
 $docsl = array() ;
 $key = 0 ;
- while ($row_Doctor = mysql_fetch_assoc($Doctor)) {
+ while ($row_Doctor = mysqli_fetch_assoc($Doctor)) {
   $docss[] = $row_Doctor['DOCTOR'] ;
   $docsl[] = $row_Doctor['DOCTOR'] ;
   $key++ ;

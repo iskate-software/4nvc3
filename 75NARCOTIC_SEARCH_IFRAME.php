@@ -15,10 +15,10 @@ if (!empty($_GET['sorting'])){
 $sortby = $_GET['sorting'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 //$query_INVENTORY = sprintf("SELECT * FROM ARINVT WHERE ITEM LIKE '%s' AND DESCRIP LIKE '%s' AND VPARTNO LIKE '%s' AND BARCODE LIKE '%s' AND GOVNARC = 1  ORDER BY ".$sortby." ASC", $item.'%', $description.'%', $vpartno.'%', $barcode.'%');
 $query_INVENTORY = "SELECT ITEMID,ITEM,DESCRIP,VPARTNO,SUPPLIER,CODE,SEQ,COST,PKGQTY,COMMENT,BARCODE,MEMO FROM ARINVT WHERE  GOVNARC = 1  ORDER BY ITEM ASC";
-$INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
+$INVENTORY = mysqli_query($tryconnection, $query_INVENTORY) or die(mysqli_error($mysqli_link));
 //$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
 //$totalRows_INVENTORY = mysql_num_rows($INVENTORY);
 
@@ -96,7 +96,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
 
 <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bordercolor="#CCCCCC" frame="below" rules="rows" bgcolor="#FFFFFF">
    
-   <?php while ($row_INVENTORY = mysql_fetch_assoc($INVENTORY)) { ?> 
+   <?php while ($row_INVENTORY = mysqli_fetch_assoc($INVENTORY)) { ?> 
   
    <tr class="Verdana11" height="15" id="<?php echo $row_INVENTORY['ITEMID']; ?>" onclick="window.open('<?php echo $where ;?>.php?itemid=<?php echo $row_INVENTORY['ITEM']; ?>&descrip=<?php echo $row_INVENTORY['DESCRIP'] ;?>&vencode=<?php echo $row_INVENTORY['VPARTNO'] ;?>','_parent')" onmouseover="highliteline(this.id);" onmouseout="whiteoutline(this.id);">
       <td height="10" width="90"><?php echo $row_INVENTORY['ITEM']; ?></td>
@@ -117,5 +117,5 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
 <!-- InstanceEnd -->
 </html>
 <?php
-mysql_free_result($INVENTORY);
+mysqli_free_result($INVENTORY);
 ?>

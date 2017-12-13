@@ -4,12 +4,12 @@ require_once('../../tryconnection.php');
 include("../../ASSETS/age.php");
 
 $classid=$_GET['classid'];
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CLASSES = "SELECT CLASSID, CLASS, CONCAT(REGITM1,' ',REGOPR1,' ',REGITM2,' ' ,REGOPR2, ' ' , REGITM3) AS VIEWFORM1, 
   REGITM1, REGOPR1, REGITM2, REGOPR2, REGITM3, ROUNDER1,MINPRICE1, CONCAT(REGITM4,' ',REGOPR4,' ',REGITM5,' ' ,REGOPR5, ' ',REGITM6) AS VIEWFORM4, 
   ROUNDER4, MINPRICE4,REGITM6, MEMO1, MEMO2 FROM FORMULA1 WHERE CLASSID = $classid LIMIT 1";
-$CLASSES = mysql_query($query_CLASSES, $tryconnection) or die(mysql_error());
-$row_CLASSES = mysql_fetch_assoc($CLASSES);
+$CLASSES = mysqli_query($tryconnection, $query_CLASSES) or die(mysqli_error($mysqli_link));
+$row_CLASSES = mysqli_fetch_assoc($CLASSES);
 
 
 if (isset($_POST['save']) && $classid=='0'){
@@ -21,10 +21,10 @@ if (isset($_POST['save']) && $classid=='0'){
   
  $insert_FORMULA1="INSERT INTO FORMULA1 (CLASS, VIEWFORM1, REGITM1, REGOPR1, REGITM2, REGOPR2, REGITM3, VAR1, VAR2,VAR3, REGITM6,ROUNDER1,         
  ROUNDER4, MEMO1, MEMO2, MINPRICE1, MINPRICE4,VIEWFORM4,REGITM4, REGOPR4,REGITM5,REGOPR5,VAR4,VAR5,VAR6,FLDCOUNT4) 
- VALUES ('$_POST[class]','".mysql_real_escape_string($viewform1)."','COST','/','PKGQTY', '*','$_POST[var3]','MCOST','MPKGQTY', '$_POST[var3]','$_POST[var6]','$_POST[rounder1]',
- '$_POST[rounder4]','".mysql_real_escape_string($_POST['memo1'])."','".mysql_real_escape_string($_POST['memo2'])."','$_POST[minprice1]','$_POST[minprice4]', '".mysql_real_escape_string($viewform4)."',
+ VALUES ('$_POST[class]','".mysqli_real_escape_string($mysqli_link, $viewform1)."','COST','/','PKGQTY', '*','$_POST[var3]','MCOST','MPKGQTY', '$_POST[var3]','$_POST[var6]','$_POST[rounder1]',
+ '$_POST[rounder4]','".mysqli_real_escape_string($mysqli_link, $_POST['memo1'])."','".mysqli_real_escape_string($mysqli_link, $_POST['memo2'])."','$_POST[minprice1]','$_POST[minprice4]', '".mysqli_real_escape_string($mysqli_link, $viewform4)."',
  'COST', '/', 'PKGQTY','*','MCOST','MPKGQTY', '$_POST[var6]','3' )";
- $FORMULA1=mysql_query($insert_FORMULA1, $tryconnection) or die(mysql_error());
+ $FORMULA1=mysqli_query($tryconnection, $insert_FORMULA1) or die(mysqli_error($mysqli_link));
  header('Location:CLASS_REPORT.php');
 }
 else if (isset($_POST['save']) && $classid !='0'){
@@ -32,16 +32,16 @@ else if (isset($_POST['save']) && $classid !='0'){
  $viewform1 = $row_CLASSES['VIEWFORM1'];
  $viewform4 = $row_CLASSES['VIEWFORM4'];
 
- $update_FORMULA1="UPDATE FORMULA1 SET REGITM3 ='$_POST[var3]', VAR3 = '$_POST[var3]', REGITM6 ='$_POST[var6]', VAR6 ='$_POST[var6]', ROUNDER1='$_POST[rounder1]', ROUNDER4='$_POST[rounder4]', MEMO1='".mysql_real_escape_string($_POST['memo1'])."', 
- MEMO2='".mysql_real_escape_string($_POST['memo2'])."', VIEWFORM1 = '".mysql_real_escape_string($viewform1)."', VIEWFORM4 = '".mysql_real_escape_string($viewform4)."', MINPRICE1='$_POST[minprice1]', MINPRICE4='$_POST[minprice4]' WHERE CLASSID='$classid' LIMIT 1";
- $FORMULA1=mysql_query($update_FORMULA1, $tryconnection) or die(mysql_error());
+ $update_FORMULA1="UPDATE FORMULA1 SET REGITM3 ='$_POST[var3]', VAR3 = '$_POST[var3]', REGITM6 ='$_POST[var6]', VAR6 ='$_POST[var6]', ROUNDER1='$_POST[rounder1]', ROUNDER4='$_POST[rounder4]', MEMO1='".mysqli_real_escape_string($mysqli_link, $_POST['memo1'])."', 
+ MEMO2='".mysqli_real_escape_string($mysqli_link, $_POST['memo2'])."', VIEWFORM1 = '".mysqli_real_escape_string($mysqli_link, $viewform1)."', VIEWFORM4 = '".mysqli_real_escape_string($mysqli_link, $viewform4)."', MINPRICE1='$_POST[minprice1]', MINPRICE4='$_POST[minprice4]' WHERE CLASSID='$classid' LIMIT 1";
+ $FORMULA1=mysqli_query($tryconnection, $update_FORMULA1) or die(mysqli_error($mysqli_link));
  header('Location:CLASS_REPORT.php');
 }
 else if (isset($_POST['delete']) && $classid!='0'){
 $delete_FORMULA1="DELETE FROM FORMULA1 WHERE CLASSID='$classid' LIMIT 1";
-$FORMULA1=mysql_query($delete_FORMULA1, $tryconnection) or die(mysql_error());
+$FORMULA1=mysqli_query($tryconnection, $delete_FORMULA1) or die(mysqli_error($mysqli_link));
 $optimize_FORMULA1="OPTIMIZE TABLE FORMULA1";
-$FORMULA2=mysql_query($optimize_FORMULA1, $tryconnection) or die(mysql_error());
+$FORMULA2=mysqli_query($tryconnection, $optimize_FORMULA1) or die(mysqli_error($mysqli_link));
 header('Location:CLASS_REPORT.php');
 }
 

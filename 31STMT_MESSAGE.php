@@ -2,7 +2,7 @@
 session_start();
 require_once('../../tryconnection.php'); 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 if (isset($_POST['check1'])) {
  $closewindow= "self.close();" ;

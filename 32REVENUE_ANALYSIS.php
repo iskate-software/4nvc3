@@ -2,84 +2,84 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
-$DOIT1 = mysql_query($LIMIT1, $tryconnection ) or die(mysql_error()) ;
-$FIRSTINV = mysql_fetch_array($DOIT1);
+$DOIT1 = mysqli_query($tryconnection, $LIMIT1) or die(mysqli_error($mysqli_link)) ;
+$FIRSTINV = mysqli_fetch_array($DOIT1);
 
 $LIMIT2 = "SELECT LASTINV FROM PREFER LIMIT 1" ;
-$DOIT2 = mysql_query($LIMIT2, $tryconnection ) or die(mysql_error()) ;
-$LASTINV = mysql_fetch_array($DOIT2);
+$DOIT2 = mysqli_query($tryconnection, $LIMIT2) or die(mysqli_error($mysqli_link)) ;
+$LASTINV = mysqli_fetch_array($DOIT2);
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
-$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
-$closedate=mysql_fetch_array($closedate);
+$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysqli_error($mysqli_link));
+$closedate=mysqli_fetch_array($closedate);
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
-$clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
-$clm1 = mysql_fetch_array($clm) ;
+$clm = mysqli_query($tryconnection, $closemonth) or die(mysqli_error($mysqli_link)) ;
+$clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 
 $SETUP1 = "DROP TABLE IF EXISTS MSALES" ;
-$PREP1 = mysql_query($SETUP1, $tryconnection) or die(mysql_error()) ;
+$PREP1 = mysqli_query($tryconnection, $SETUP1) or die(mysqli_error($mysqli_link)) ;
 
 $SETUP2 = "CREATE TABLE MSALES LIKE SALESCAT" ;
-$PREP2 = mysql_query($SETUP2, $tryconnection) or die(mysql_error()) ;
+$PREP2 = mysqli_query($tryconnection, $SETUP2) or die(mysqli_error($mysqli_link)) ;
 
 // $SETUP3 = "INSERT INTO MSALES SELECT * FROM SALESCAT WHERE INVREVCAT <> 0 AND INVREVCAT <> 91 AND INVDTE <= '$closedate[0]' AND INVNO >='$FIRSTINV[0]' AND INVNO <= '$LASTINV[0]' AND INVDECLINE=0"  ; 
 $SETUP3 = "INSERT INTO MSALES SELECT * FROM SALESCAT WHERE INVREVCAT <> 0 AND INVREVCAT <> 91 AND INVDTE <= '$closedate[0]'  AND INVDECLINE=0"  ;
-$PREP3 = mysql_query($SETUP3, $tryconnection) or die(mysql_error()) ;
+$PREP3 = mysqli_query($tryconnection, $SETUP3) or die(mysqli_error($mysqli_link)) ;
 
 // first, the dogs.
 
 $CANINE = "SELECT INVMAJ, INVORDDOC, SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND INVLGSM = 1 GROUP BY (INVMAJ+100), INVORDDOC WITH ROLLUP" ;
-$CANPRT = mysql_query($CANINE, $tryconnection) or die(mysql_error()) ;
-$row_CANINE = mysql_fetch_assoc($CANPRT) ;
+$CANPRT = mysqli_query($tryconnection, $CANINE) or die(mysqli_error($mysqli_link)) ;
+$row_CANINE = mysqli_fetch_assoc($CANPRT) ;
 
 
 
 // then cats.
 
 $FELINE = "SELECT INVMAJ,INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND  INVLGSM = 2 GROUP BY (INVMAJ+100),INVORDDOC WITH ROLLUP" ;
-$FELPRT = mysql_query($FELINE, $tryconnection) or die(mysql_error()) ;
-$row_FELINE = mysql_fetch_assoc($FELPRT) ;
+$FELPRT = mysqli_query($tryconnection, $FELINE) or die(mysqli_error($mysqli_link)) ;
+$row_FELINE = mysqli_fetch_assoc($FELPRT) ;
 
 // horses.
 
 $EQUINE = "SELECT INVMAJ,INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND  INVLGSM = 3 GROUP BY (INVMAJ+100),INVORDDOC WITH ROLLUP" ;
-$EQPRT = mysql_query($EQUINE, $tryconnection) or die(mysql_error()) ;
-$row_EQUINE = mysql_fetch_assoc($EQPRT) ;
+$EQPRT = mysqli_query($tryconnection, $EQUINE) or die(mysqli_error($mysqli_link)) ;
+$row_EQUINE = mysqli_fetch_assoc($EQPRT) ;
 
 // cattle.
 
 $BOVINE = "SELECT INVMAJ,INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND  INVLGSM = 4 GROUP BY (INVMAJ+100),INVORDDOC WITH ROLLUP" ;
-$BOVPRT = mysql_query($BOVINE, $tryconnection) or die(mysql_error()) ;
-$row_BOVINE = mysql_fetch_assoc($BOVPRT) ;
+$BOVPRT = mysqli_query($tryconnection, $BOVINE) or die(mysqli_error($mysqli_link)) ;
+$row_BOVINE = mysqli_fetch_assoc($BOVPRT) ;
 
 // goats and sheep.
 
 $CAPRINE = "SELECT INVMAJ,INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND  INVLGSM = 5 GROUP BY (INVMAJ+100),INVORDDOC WITH ROLLUP" ;
-$CAPRPRT = mysql_query($CAPRINE, $tryconnection) or die(mysql_error()) ;
-$row_CAPRINE = mysql_fetch_assoc($CAPRPRT) ;
+$CAPRPRT = mysqli_query($tryconnection, $CAPRINE) or die(mysqli_error($mysqli_link)) ;
+$row_CAPRINE = mysqli_fetch_assoc($CAPRPRT) ;
 
 // pigs.
 
 $PORCINE = "SELECT INVMAJ,INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND  INVLGSM = 6 GROUP BY (INVMAJ+100),INVORDDOC WITH ROLLUP" ;
-$PORCPRT = mysql_query($PORCINE, $tryconnection) or die(mysql_error()) ;
-$row_PORCINE = mysql_fetch_assoc($PORCPRT) ;
+$PORCPRT = mysqli_query($tryconnection, $PORCINE) or die(mysqli_error($mysqli_link)) ;
+$row_PORCINE = mysqli_fetch_assoc($PORCPRT) ;
 
 // birds.
 
 $AVIAN = "SELECT INVMAJ,INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND  INVLGSM = 7 GROUP BY (INVMAJ+100),INVORDDOC WITH ROLLUP" ;
-$AVPRT = mysql_query($AVIAN, $tryconnection) or die(mysql_error()) ;
-$row_AVIAN = mysql_fetch_assoc($AVPRT) ;
+$AVPRT = mysqli_query($tryconnection, $AVIAN) or die(mysqli_error($mysqli_link)) ;
+$row_AVIAN = mysqli_fetch_assoc($AVPRT) ;
 
 // others (pocket pets, exotics).
 
 $OTHER = "SELECT INVMAJ,INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND  INVLGSM = 8 GROUP BY (INVMAJ+100),INVORDDOC WITH ROLLUP" ;
-$OTHPRT = mysql_query($OTHER, $tryconnection) or die(mysql_error()) ;
-$row_OTHER = mysql_fetch_assoc($OTHPRT) ;
+$OTHPRT = mysqli_query($tryconnection, $OTHER) or die(mysqli_error($mysqli_link)) ;
+$row_OTHER = mysqli_fetch_assoc($OTHPRT) ;
 
 // Finally, the total Revenue analysis which rolls up all of the above into a single report.
 // Average invoice per doctor is also calculated. The Doctor file is the source of the data,
@@ -89,7 +89,7 @@ $row_OTHER = mysql_fetch_assoc($OTHPRT) ;
 // now pick out all the doctors who actually invoiced this month, and check it against the master list.
 
 $DOCAVG4 = "SELECT DISTINCT INVORDDOC FROM MSALES " ;
-$DOCAVG5 = mysql_query($DOCAVG4, $tryconnection) or die(mysql_error()) ;
+$DOCAVG5 = mysqli_query($tryconnection, $DOCAVG4) or die(mysqli_error($mysqli_link)) ;
 
 /* First, the master loop which will refresh the reference table until there are no more new doctors.
 
@@ -109,8 +109,8 @@ while ($row = mysql_fetch_row($DOCAVG5) {
 }
 */
 $query_TOTREV = "SELECT INVMAJ, INVREVCAT, INVORDDOC, SUM(INVTOT) AS INVTOT FROM MSALES GROUP BY (INVREVCAT+100), INVORDDOC WITH ROLLUP" ;
-$TOTREV = mysql_query($query_TOTREV, $tryconnection) or die(mysql_error()) ;
-$row_TOTREV = mysql_fetch_assoc($TOTREV) ;
+$TOTREV = mysqli_query($tryconnection, $query_TOTREV) or die(mysqli_error($mysqli_link)) ;
+$row_TOTREV = mysqli_fetch_assoc($TOTREV) ;
 /*
  For this one, the interpretation of INVREVCAT comes from REVCAT, with the following additions:
  	90 = GST
@@ -123,8 +123,8 @@ $row_TOTREV = mysql_fetch_assoc($TOTREV) ;
 */
 
   $query_CRITDATA = "SELECT HGST,HOGST,HGSTDATE,HTAXNAME,HOTAXNAME FROM CRITDATA LIMIT 1" ;
-  $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-  $row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+  $CRITDATA = mysqli_query($tryconnection, $query_CRITDATA) or die(mysqli_error($mysqli_link));
+  $row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
   $date2 = date("Y-m-d",time());
   if ($date2 >= $row_CRITDATA['HGSTDATE']) {
    $GSTNAME = $row_CRITDATA['HTAXNAME'] ;
@@ -197,8 +197,8 @@ Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_CANINE['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='1' AND TCATGRY='".$row_CANINE['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_CANINE['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_CANINE['INVMAJ'])){
@@ -244,7 +244,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_CANINE['INVMAJ'];} while ($row_CANINE = mysql_fetch_assoc($CANPRT));  ?>
+   $xxx = $row_CANINE['INVMAJ'];} while ($row_CANINE = mysqli_fetch_assoc($CANPRT));  ?>
 </table>
 
 <h2> </h2>
@@ -288,8 +288,8 @@ Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_FELINE['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='2' AND TCATGRY='".$row_FELINE['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_FELINE['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_FELINE['INVMAJ'])){
@@ -335,7 +335,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_FELINE['INVMAJ'];} while ($row_FELINE = mysql_fetch_assoc($FELPRT));  ?>
+   $xxx = $row_FELINE['INVMAJ'];} while ($row_FELINE = mysqli_fetch_assoc($FELPRT));  ?>
 
 
       </table>
@@ -379,8 +379,8 @@ Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_EQUINE['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='3' AND TCATGRY='".$row_EQUINE['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_EQUINE['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_EQUINE['INVMAJ'])){
@@ -426,7 +426,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_EQUINE['INVMAJ'];} while ($row_EQUINE = mysql_fetch_assoc($EQPRT));  ?>
+   $xxx = $row_EQUINE['INVMAJ'];} while ($row_EQUINE = mysqli_fetch_assoc($EQPRT));  ?>
 
 
       </table>
@@ -471,8 +471,8 @@ Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_BOVINE['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='4' AND TCATGRY='".$row_BOVINE['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_BOVINE['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_BOVINE['INVMAJ'])){
@@ -518,7 +518,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_BOVINE['INVMAJ'];} while ($row_BOVINE = mysql_fetch_assoc($BOVPRT));  ?>
+   $xxx = $row_BOVINE['INVMAJ'];} while ($row_BOVINE = mysqli_fetch_assoc($BOVPRT));  ?>
 </table>
 
    
@@ -562,8 +562,8 @@ Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_CAPRINE['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='5' AND TCATGRY='".$row_CAPRINE['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_CAPRINE['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_CAPRINE['INVMAJ'])){
@@ -609,7 +609,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_CAPRINE['INVMAJ'];} while ($row_CAPRINE = mysql_fetch_assoc($CAPRPRT));  ?>
+   $xxx = $row_CAPRINE['INVMAJ'];} while ($row_CAPRINE = mysqli_fetch_assoc($CAPRPRT));  ?>
 </table>
 
    
@@ -653,8 +653,8 @@ Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_PORCINE['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='6' AND TCATGRY='".$row_PORCINE['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_PORCINE['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_PORCINE['INVMAJ'])){
@@ -700,7 +700,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_PORCINE['INVMAJ'];} while ($row_PORCINE = mysql_fetch_assoc($PORCPRT));  ?>
+   $xxx = $row_PORCINE['INVMAJ'];} while ($row_PORCINE = mysqli_fetch_assoc($PORCPRT));  ?>
 </table>
 
    
@@ -744,8 +744,8 @@ Revenue Analysis (
     <td '></td>
     <td class="Verdana12B"><?php if ($row_AVIAN['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='7' AND TCATGRY='".$row_AVIAN['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_AVIAN['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_AVIAN['INVMAJ'])){
@@ -791,7 +791,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_AVIAN['INVMAJ'];} while ($row_AVIAN = mysql_fetch_assoc($AVPRT));  ?>
+   $xxx = $row_AVIAN['INVMAJ'];} while ($row_AVIAN = mysqli_fetch_assoc($AVPRT));  ?>
 </table>
 
    
@@ -835,8 +835,8 @@ Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_OTHER['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='8' AND TCATGRY='".$row_OTHER['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_OTHER['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_OTHER['INVMAJ'])){
@@ -882,7 +882,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_OTHER['INVMAJ'];} while ($row_OTHER = mysql_fetch_assoc($OTHPRT));  ?>
+   $xxx = $row_OTHER['INVMAJ'];} while ($row_OTHER = mysqli_fetch_assoc($OTHPRT));  ?>
    
 </table>
 <h2> </h2>
@@ -920,8 +920,8 @@ Total Revenue Analysis (
 	<?php 
 	if ($row_TOTREV['INVREVCAT']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM REVCAT WHERE TCATGRY='".$row_TOTREV['INVREVCAT']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} 
 	else if ($row_TOTREV['INVREVCAT']==90 && empty($row_TOTREV['INVORDDOC'])){
@@ -986,7 +986,7 @@ Total Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_TOTREV['INVREVCAT'];} while ($row_TOTREV = mysql_fetch_assoc($TOTREV));  ?>
+   $xxx = $row_TOTREV['INVREVCAT'];} while ($row_TOTREV = mysqli_fetch_assoc($TOTREV));  ?>
 
 
 </table>
@@ -1023,8 +1023,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18" align="right">
   <?php 
   $query_SUMMARY1 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT < 90" ;
-  $SUMMARY1 = mysql_query($query_SUMMARY1, $tryconnection) or die(mysql_error());
-  $row_1 = mysql_fetch_assoc($SUMMARY1);
+  $SUMMARY1 = mysqli_query($tryconnection, $query_SUMMARY1) or die(mysqli_error($mysqli_link));
+  $row_1 = mysqli_fetch_assoc($SUMMARY1);
   echo number_format($row_1['INVTOT'],2);
   ?>  </td>
   <td height="18"></td>
@@ -1038,8 +1038,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18" align="right">
   <?php 
   $query_SUMMARY2 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 95" ;
-  $SUMMARY2 = mysql_query($query_SUMMARY2, $tryconnection) or die(mysql_error());
-  $row_2 = mysql_fetch_assoc($SUMMARY2);
+  $SUMMARY2 = mysqli_query($tryconnection, $query_SUMMARY2) or die(mysqli_error($mysqli_link));
+  $row_2 = mysqli_fetch_assoc($SUMMARY2);
   echo number_format($row_2['INVTOT'],2);
   ?>  </td>
   <td height="18"></td>
@@ -1073,8 +1073,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18" align="right"><span class="Verdana12">
     <?php 
   $query_SUMMARY3 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 99 ;" ;
-  $SUMMARY3 = mysql_query($query_SUMMARY3, $tryconnection) or die(mysql_error());
-  $row_3 = mysql_fetch_assoc($SUMMARY3);
+  $SUMMARY3 = mysqli_query($tryconnection, $query_SUMMARY3) or die(mysqli_error($mysqli_link));
+  $row_3 = mysqli_fetch_assoc($SUMMARY3);
   echo number_format($row_3['INVTOT'],2);
   ?>
   </span></td>
@@ -1088,8 +1088,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18"></td>
   <td height="18" align="right"><?php 
   $query_SUMMARY4 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 98 " ;
-  $SUMMARY4 = mysql_query($query_SUMMARY4, $tryconnection) or die(mysql_error());
-  $row_4 = mysql_fetch_assoc($SUMMARY4);
+  $SUMMARY4 = mysqli_query($tryconnection, $query_SUMMARY4) or die(mysqli_error($mysqli_link));
+  $row_4 = mysqli_fetch_assoc($SUMMARY4);
   echo number_format($row_4['INVTOT'],2);
   ?></td>
   <td height="18"></td>
@@ -1102,8 +1102,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18"></td>
   <td height="18" align="right"><?php 
   $query_SUMMARY5 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 96" ;
-  $SUMMARY5 = mysql_query($query_SUMMARY5, $tryconnection) or die(mysql_error());
-  $row_5 = mysql_fetch_assoc($SUMMARY5);
+  $SUMMARY5 = mysqli_query($tryconnection, $query_SUMMARY5) or die(mysqli_error($mysqli_link));
+  $row_5 = mysqli_fetch_assoc($SUMMARY5);
   echo number_format($row_5['INVTOT'],2);
   ?></td>
   <td height="18"></td>
@@ -1156,8 +1156,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18"></td>
   <td height="18" align="right"><?php 
   $query_SUMMARY6 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 90 AND INVDESC <> 'CANCELLED' " ;
-  $SUMMARY6 = mysql_query($query_SUMMARY6, $tryconnection) or die(mysql_error());
-  $row_6 = mysql_fetch_assoc($SUMMARY6);
+  $SUMMARY6 = mysqli_query($tryconnection, $query_SUMMARY6) or die(mysqli_error($mysqli_link));
+  $row_6 = mysqli_fetch_assoc($SUMMARY6);
   echo number_format($row_6['INVTOT'],2);
   ?></td>
   <td height="18"></td>
@@ -1170,8 +1170,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18"></td>
   <td height="18" align="right"><?php 
   $query_SUMMARY7 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 92" ;
-  $SUMMARY7 = mysql_query($query_SUMMARY7, $tryconnection) or die(mysql_error());
-  $row_7 = mysql_fetch_assoc($SUMMARY7);
+  $SUMMARY7 = mysqli_query($tryconnection, $query_SUMMARY7) or die(mysqli_error($mysqli_link));
+  $row_7 = mysqli_fetch_assoc($SUMMARY7);
   echo number_format($row_7['INVTOT'],2);
   ?></td>
   <td height="18"></td>
@@ -1235,8 +1235,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18"></td>
   <td height="18" align="right"><?php 
   $query_SUMMARY8 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 99 AND INVNO != 0 " ;
-  $SUMMARY8 = mysql_query($query_SUMMARY8, $tryconnection) or die(mysql_error());
-  $row_8 = mysql_fetch_assoc($SUMMARY8);
+  $SUMMARY8 = mysqli_query($tryconnection, $query_SUMMARY8) or die(mysqli_error($mysqli_link));
+  $row_8 = mysqli_fetch_assoc($SUMMARY8);
   echo number_format($row_8['INVTOT'],2);
   ?></td>
   <td height="18"></td>
@@ -1248,8 +1248,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18" colspan="2">Cancelled Service Charges</td>
   <td height="18" align="right"><?php 
   $query_SUMMARY9 = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 98 AND INVNO = 0" ;
-  $SUMMARY9 = mysql_query($query_SUMMARY9, $tryconnection) or die(mysql_error());
-  $row_9 = mysql_fetch_assoc($SUMMARY9);
+  $SUMMARY9 = mysqli_query($tryconnection, $query_SUMMARY9) or die(mysqli_error($mysqli_link));
+  $row_9 = mysqli_fetch_assoc($SUMMARY9);
   echo number_format($row_9['INVTOT'],2);
   ?></td>
   <td height="18"></td>
@@ -1261,8 +1261,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18" colspan="2">Cancelled <?php echo $GSTNAME ;?> (Adjustments)</td>
   <td height="18" align="right"><?php 
   $query_SUMMARYA = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 90 AND INVTOT < 0 AND INVDESC = 'CANCELLED' " ;
-  $SUMMARYA = mysql_query($query_SUMMARYA, $tryconnection) or die(mysql_error());
-  $row_10 = mysql_fetch_assoc($SUMMARYA);
+  $SUMMARYA = mysqli_query($tryconnection, $query_SUMMARYA) or die(mysqli_error($mysqli_link));
+  $row_10 = mysqli_fetch_assoc($SUMMARYA);
   echo number_format($row_10['INVTOT'],2);
   ?></td>
   <td height="18"></td>
@@ -1274,8 +1274,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18" colspan="2">Cancelled PST</td>
   <td height="18" align="right"><?php 
   $query_SUMMARYB = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT = 92 AND INVTOT < 0" ;
-  $SUMMARYB = mysql_query($query_SUMMARYB, $tryconnection) or die(mysql_error());
-  $row_11 = mysql_fetch_assoc($SUMMARYB);
+  $SUMMARYB = mysqli_query($tryconnection, $query_SUMMARYB) or die(mysqli_error($mysqli_link));
+  $row_11 = mysqli_fetch_assoc($SUMMARYB);
   echo number_format($row_11['INVTOT'],2);
   ?></td>
   <td height="18"></td>
@@ -1288,8 +1288,8 @@ Revenue Summary (<?php echo $clm2; ?>)</td>
   <td height="18" align="right" class="Verdana12B">Subtotal</td>
   <td height="18" align="right" class="Verdana12B"><?php 
   $query_SUMMARYC = "SELECT SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVREVCAT < 90" ;
-  $SUMMARYC = mysql_query($query_SUMMARYC, $tryconnection) or die(mysql_error());
-  $row_SUMMARYC = mysql_fetch_assoc($SUMMARYC);
+  $SUMMARYC = mysqli_query($tryconnection, $query_SUMMARYC) or die(mysqli_error($mysqli_link));
+  $row_SUMMARYC = mysqli_fetch_assoc($SUMMARYC);
   echo number_format($row_8['INVTOT']+$row_9['INVTOT']+$row_10['INVTOT']+$row_11['INVTOT'],2);
   ?></td>
   <td height="18"></td>

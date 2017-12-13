@@ -18,7 +18,7 @@
 // To keep subsequent joins minimalized, ARCUSTO is then extracted to a temporary file for 
 // non zero balances.
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $BALANCE1 = "DROP TEMPORARY TABLE IF EXISTS TAR1" ;
 $BALANCE2 = "CREATE TEMPORARY TABLE TAR1 (CUSTNO FLOAT(7),COMPANY VARCHAR(50),INVDTE DATE, IBAL FLOAT(8,2)) 
@@ -31,13 +31,13 @@ $BALANCE7 = "CREATE TEMPORARY TABLE TARCUST (CUSTNO FLOAT(7),TITLE VARCHAR(25),C
              CONTACT VARCHAR(50), ADDRESS1 VARCHAR(60), ADDRESS2 VARCHAR(60),CITY VARCHAR(50), STATE 
              CHAR(3), ZIP CHAR(12), COUNTRY VARCHAR(30)) SELECT CUSTNO,TITLE,COMPANY,CONTACT,ADDRESS1,
              ADDRESS2, STATE,ZIP, COUNTRY,CREDIT FROM ARCUSTO WHERE BALANCE <> 0 " ;
-$Q_Balance1 = mysql_query($BALANCE1, $tryconnection) or die(mysql_error());
-$Q_Balance2 = mysql_query($BALANCE2, $tryconnection) or die(mysql_error());
-$Q_Balance3 = mysql_query($BALANCE3, $tryconnection) or die(mysql_error());
-$Q_Balance4 = mysql_query($BALANCE4, $tryconnection) or die(mysql_error());
-$Q_Balance5 = mysql_query($BALANCE5, $tryconnection) or die(mysql_error());
-$Q_Balance6 = mysql_query($BALANCE6, $tryconnection) or die(mysql_error());
-$Q_Balance7 = mysql_query($BALANCE7, $tryconnection) or die(mysql_error());
+$Q_Balance1 = mysqli_query($tryconnection, $BALANCE1) or die(mysqli_error($mysqli_link));
+$Q_Balance2 = mysqli_query($tryconnection, $BALANCE2) or die(mysqli_error($mysqli_link));
+$Q_Balance3 = mysqli_query($tryconnection, $BALANCE3) or die(mysqli_error($mysqli_link));
+$Q_Balance4 = mysqli_query($tryconnection, $BALANCE4) or die(mysqli_error($mysqli_link));
+$Q_Balance5 = mysqli_query($tryconnection, $BALANCE5) or die(mysqli_error($mysqli_link));
+$Q_Balance6 = mysqli_query($tryconnection, $BALANCE6) or die(mysqli_error($mysqli_link));
+$Q_Balance7 = mysqli_query($tryconnection, $BALANCE7) or die(mysqli_error($mysqli_link));
 
 // Then, all the cash records are gathered from ARCASHR and CASHDEP and 
 // summarised for each client. This allows both for removing payments on receivables
@@ -48,16 +48,16 @@ $Q_Balance7 = mysql_query($BALANCE7, $tryconnection) or die(mysql_error());
 $CASH1 = "DROP TEMPORARY TABLE IF EXISTS CASH"
 $CASH2 = "CREATE TEMPORARY TABLE CASH SELECT * FROM ARCASHR  ORDER BY CUSTNO,INVNO,INVDTE ASC" ;
 $CASH3 = "INSERT INTO CASH SELECT * FROM CASHDEP "; 
-$Q_Cash1 = mysql_query($CASH1, $tryconnection) or die(mysql_error());
-$Q_Cash2 = mysql_query($CASH2, $tryconnection) or die(mysql_error());
-$Q_Cash3 = mysql_query($CASH3, $tryconnection) or die(mysql_error());
+$Q_Cash1 = mysqli_query($tryconnection, $CASH1) or die(mysqli_error($mysqli_link));
+$Q_Cash2 = mysqli_query($tryconnection, $CASH2) or die(mysqli_error($mysqli_link));
+$Q_Cash3 = mysqli_query($tryconnection, $CASH3) or die(mysqli_error($mysqli_link));
 
 // The receivables are then selected using the $indate variable to exclude any late records.
 
 $INVOICE1 = "DROP TEMPORARY TABLE IF EXISTS TARV" ;
 $INVOICE2 = "CREATE TEMPORARY TABLE TARV SELECT * FROM ARARECV WHERE INVDTE <= $invdate[0] ORDER BY CUSTNO" ;
-$Q_Invoice1 = mysql_query($INVOICE1, $tryconnection) or die(mysql_error());
-$Q_Invoice2 = mysql_query($INVOICE2, $tryconnection) or die(mysql_error());
+$Q_Invoice1 = mysqli_query($tryconnection, $INVOICE1) or die(mysqli_error($mysqli_link));
+$Q_Invoice2 = mysqli_query($tryconnection, $INVOICE2) or die(mysqli_error($mysqli_link));
 
 // If the run is being backdated to the last month end, the above selection looks after everything 
 // but the overdated payments in both the receivables file (TARV) and the cash file (CASH). 
@@ -67,9 +67,9 @@ $Q_Invoice2 = mysql_query($INVOICE2, $tryconnection) or die(mysql_error());
 if ($cashdate[0] > $invdate[0] || $invdate[0] < date('Y-m-d')) {
   $TARV1 = "UPDATE TARV JOIN CASH USING (CUSTNO,INVNO) SET TARV.IBAL = TARV.IBAL - CASH.AMTPAID WHERE 
             CASH.DTEPAID > '$cashdate[0]'";
-  $Q_Tarv1 = mysql_query($TARV1, $tryconnection) or die(mysql_error());
+  $Q_Tarv1 = mysqli_query($tryconnection, $TARV1) or die(mysqli_error($mysqli_link));
   $CASH4 = "DELETE FROM CASH WHERE INVDTE > '$invdate[0]' ";
-  $Q_Cash4 = mysql_query($CASH4, $tryconnection) or die(mysql_error());
+  $Q_Cash4 = mysqli_query($tryconnection, $CASH4) or die(mysqli_error($mysqli_link));
 }
 // Finally, we have clean data. So, work through the temporary client file, extracting the appropriate
 // data.
@@ -82,13 +82,13 @@ if ($cashdate[0] > $invdate[0] || $invdate[0] < date('Y-m-d')) {
   $Curdate = YEAR($invdte) + MONTH($invdte) * 12 ;
 $CLIENTS = "SELECT  CUSTNO,TITLE,COMPANY,CONTACT,ADDRESS1,
              ADDRESS2, STATE, ZIP, COUNTRY, CREDIT FROM TARCUST" ;
-$Q_Client = mysql_query($CLIENTS, $tryconnection( or die(mysql_error()) ;
-while($row = mysql_fetch_assoc($Q_Client)) {
+$Q_Client = mysqli_query($tryconnection( or die(mysqli_error($mysqli_link)) ;
+while($row = mysqli_fetch_assoc($Q_Client)) {
   // Check for cash
   $pay2date = 0 ;
   $Is_Cash = "SELECT SUM(AMTPAID) FROM CASH WHERE CUSTNO = $row['CUSTNO']" ;
-  $Q_Cash5 = mysql_query($Is_Cash, $tryconnection) or die(mysql_error()) ;
-  $any = mysql_fetch_array($Q_Cash,MYSQL_NUM) ;
+  $Q_Cash5 = mysqli_query($tryconnection, $Is_Cash) or die(mysqli_error($mysqli_link)) ;
+  $any = mysqli_fetch_array($Q_Cash,MYSQLI_NUM) ;
   if ($any) {
     $pay2date = $any ;
   }
@@ -100,7 +100,7 @@ while($row = mysql_fetch_assoc($Q_Client)) {
   $Over_120 = 0 ;
   // now get the receivables
   $RECEIVABLES = 'SELECT INVNO,INVDTE,PONUM,ITOTAL,AMTPAID,IBAL FROM TARV WHERE CUSTNO = $row['CUSTNO'] ORDER BY INVDTE  ';
-  $Q_Recv = mysql_query($RECEIVABLES, $tryconnection) or die(mysql_error()) ;
+  $Q_Recv = mysqli_query($tryconnection, $RECEIVABLES) or die(mysqli_error($mysqli_link)) ;
   
   // Then print the Statement Heading, 
   
@@ -109,7 +109,7 @@ while($row = mysql_fetch_assoc($Q_Client)) {
   // Cash paid this month if any
 //   use $pay2date if not zero.......  
   // and the detailed invoice amounts. Do the aging as you go.
-  while($row1 = mysql_fetch_assoc($Q_Recv) {
+  while($row1 = mysqli_fetch_assoc($Q_Recv) {
   if $Curdate - (YEAR($row1['invdte']) + 12*MONTH($row1['invdte']) ) = 0 ) {
     $Current = $Current + $row1['ibal'] ;
     $GCurrent = $GCurrent + $row1['ibal'] ;
@@ -118,7 +118,7 @@ while($row = mysql_fetch_assoc($Q_Client)) {
     $Over_30 = $Over_30 + $row1['ibal'] ;
     $GOver_30 = $GOver_30 + $row1['ibal'] ;
   }
-  if $Curdate - (YEAR($row1['invdte']) + 12*MONTH($row1['invdte']) ) = 2 ) {
+  if $Curdate - (YEAR($row1['invdte']) + 12*MONTH($row1['invdte']) ) = 2, $CLIENTS) {
     $Over_60 = $Over_60 + $row1['ibal'] ;
     $GOver_60 = $GOver_60 + $row1['ibal'] ;
   }

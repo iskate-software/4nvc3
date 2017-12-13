@@ -54,25 +54,25 @@ function invtround($x,$y)
 require_once('../../tryconnection.php');
 
 $itemid=$_GET['itemid'];
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_INVENTORY = "SELECT *, DATE_FORMAT(EXPDATE, '%m/%d/%Y') AS EXPDATE, DATE_FORMAT(LDATE, '%m/%d/%Y') AS LDATE, DATE_FORMAT(LASTSALE, '%m/%d/%Y') AS LASTSALE FROM ARINVT WHERE ITEMID = '$itemid'";
-$INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
-$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
+$INVENTORY = mysqli_query($tryconnection, $query_INVENTORY) or die(mysqli_error($mysqli_link));
+$row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 
 /////////////////////////////PAGING WITHIN INVENTORY FILES/////////////////////////
 $query_VIEW="CREATE OR REPLACE VIEW INVENTORY2 AS SELECT ITEMID, ITEM FROM ARINVT ORDER BY ITEM ASC";
-$VIEW= mysql_query($query_VIEW, $tryconnection) or die(mysql_error());
+$VIEW= mysqli_query($tryconnection, $query_VIEW) or die(mysqli_error($mysqli_link));
 
 $query_INVENTORY2="SELECT * FROM INVENTORY2";
-$INVENTORY2= mysql_query($query_INVENTORY2, $tryconnection) or die(mysql_error());
-$row_INVENTORY2 = mysql_fetch_assoc($INVENTORY2);
+$INVENTORY2= mysqli_query($tryconnection, $query_INVENTORY2) or die(mysqli_error($mysqli_link));
+$row_INVENTORY2 = mysqli_fetch_assoc($INVENTORY2);
 
 $ids= array();
 do {
 $ids[]=$row_INVENTORY2['ITEMID'];
 }
-while ($row_INVENTORY2 = mysql_fetch_assoc($INVENTORY2));
+while ($row_INVENTORY2 = mysqli_fetch_assoc($INVENTORY2));
 
 $key=array_search($_GET['itemid'],$ids);
 
@@ -81,21 +81,21 @@ $key=array_search($_GET['itemid'],$ids);
 
 if (isset($_POST['check']) && $_POST['xdelete']=="1") {
 $deleteSQL="DELETE FROM ARINVT WHERE ITEMID='$itemid'";
-$Result1 = mysql_query($deleteSQL, $tryconnection) or die(mysql_error());
+$Result1 = mysqli_query($tryconnection, $deleteSQL) or die(mysqli_error($mysqli_link));
 header("Location: ADD_EDIT_INVENTORY.php?itemid=$_POST[invpointer]&check=");
 }
 
 else if (isset($_POST['check']) && $itemid=="0") {
 $expquery="SELECT STR_TO_DATE('$_POST[expdate]','%m/%d/%Y');";
-$expdate1= mysql_query($expquery, $tryconnection) or die(mysql_error());
-$expdate=mysql_fetch_array($expdate1);
+$expdate1= mysqli_query($tryconnection, $expquery) or die(mysqli_error($mysqli_link));
+$expdate=mysqli_fetch_array($expdate1);
 $ldatequery="SELECT STR_TO_DATE('$_POST[ldate]','%m/%d/%Y');";
-$ldate1= mysql_query($ldatequery, $tryconnection) or die(mysql_error());
-$ldate=mysql_fetch_array($ldate1);
+$ldate1= mysqli_query($tryconnection, $ldatequery) or die(mysqli_error($mysqli_link));
+$ldate=mysqli_fetch_array($ldate1);
 // do the class check and update. If not there, default to a markup of 1.
 $CLASS = "SELECT REGITM3,REGITM6,ROUNDER1,MINPRICE1,ROUNDER4,MINPRICE4 FROM FORMULA1 WHERE CLASS = '$_POST[class]' LIMIT 1" ;
-$get_CLASS = mysql_query($CLASS) or die(mysql_error()) ;
-$row_CLASS = mysql_fetch_array($get_CLASS) ;
+$get_CLASS = mysqli_query($mysqli_link, $CLASS) or die(mysqli_error($mysqli_link)) ;
+$row_CLASS = mysqli_fetch_array($get_CLASS) ;
 if (empty($_POST['manual']) || $_POST['manual'] == 0) {
  $_POST['price']  = ROUND($_POST['cost'] * $row_CLASS['REGITM3'] / $_POST['pkgqty'],2) ;
  $_POST['uprice'] = ROUND($_POST['cost'] * $row_CLASS['REGITM6'] / $_POST['pkgqty'],2) ;
@@ -115,9 +115,9 @@ if (empty($_POST['manual']) || $_POST['manual'] == 0) {
  }
 }
 $insertSQL = sprintf("INSERT INTO ARINVT (ITEM, `CLASS`, DESCRIP, COST, PRICE, UPRICE, ONHAND, ONORDER, ORDERPT, ORDERQTY, ORDERED, SUPPLIER, SEQ, VPARTNO, DISPFEE, BDISPFEE, GOVNARC, TAXRATE, PKGQTY, SELLUNIT, MEMO, LABEL, TYPE, DFYES, BULK, MARKUP, EXPDATE, LDATE, MONITOR, AUTOSET, SAFETY, SPECORDER, BARCODE, `COMMENT`, MANUAL, ARINVTYPE) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '$expdate[0]', '$ldate[0]', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-                       mysql_real_escape_string($_POST['item']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['item']),
                        $_POST['class'],
-                       mysql_real_escape_string($_POST['descrip']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['descrip']),
                        $_POST['cost'],
                        $_POST['price'],
                        $_POST['uprice'],
@@ -126,7 +126,7 @@ $insertSQL = sprintf("INSERT INTO ARINVT (ITEM, `CLASS`, DESCRIP, COST, PRICE, U
                        $_POST['orderpt'],
                        $_POST['orderqty'],
                        $_POST['ordered'],
-                       mysql_real_escape_string($_POST['supplier']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['supplier']),
                        $_POST['seq'],
                        $_POST['vpartno'],
                        $_POST['dispfee'],
@@ -135,7 +135,7 @@ $insertSQL = sprintf("INSERT INTO ARINVT (ITEM, `CLASS`, DESCRIP, COST, PRICE, U
                        $_POST['taxrate'],
                        $_POST['pkgqty'],
                        $_POST['sellunit'],
-                       mysql_real_escape_string($_POST['memo']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['memo']),
 					   !empty($_POST['label']) ? "1" : "0",
                        $_POST['type'],
                        $_POST['dfyes'],
@@ -151,8 +151,8 @@ $insertSQL = sprintf("INSERT INTO ARINVT (ITEM, `CLASS`, DESCRIP, COST, PRICE, U
 					   $_POST['arinvtype']
                        );
 
-mysql_select_db($database_tryconnection, $tryconnection);
-$Result1 = mysql_query($insertSQL, $tryconnection) or die(mysql_error());
+mysqli_select_db($tryconnection, $database_tryconnection);
+$Result1 = mysqli_query($tryconnection, $insertSQL) or die(mysqli_error($mysqli_link));
 if (isset($_POST['save'])){
 header("Location: INVENTORY_SEARCH_SCREEN.php");}
 else {
@@ -161,15 +161,15 @@ header("Location: ADD_EDIT_INVENTORY.php?itemid=$_POST[invpointer]&check=");}
 
 else if (isset($_POST['check']) && $itemid!="0") {
 $expquery="SELECT STR_TO_DATE('$_POST[expdate]','%m/%d/%Y');";
-$expdate1= mysql_query($expquery, $tryconnection) or die(mysql_error());
-$expdate=mysql_fetch_array($expdate1);
+$expdate1= mysqli_query($tryconnection, $expquery) or die(mysqli_error($mysqli_link));
+$expdate=mysqli_fetch_array($expdate1);
 $ldatequery="SELECT STR_TO_DATE('$_POST[ldate]','%m/%d/%Y');";
-$ldate1= mysql_query($ldatequery, $tryconnection) or die(mysql_error());
-$ldate=mysql_fetch_array($ldate1);
+$ldate1= mysqli_query($tryconnection, $ldatequery) or die(mysqli_error($mysqli_link));
+$ldate=mysqli_fetch_array($ldate1);
 // do the class check and update. If not there, default to a markup of 1.
 $CLASS = "SELECT REGITM3,REGITM6,ROUNDER1,MINPRICE1,ROUNDER4,MINPRICE4 FROM FORMULA1 WHERE CLASS = '$_POST[class]' LIMIT 1" ;
-$get_CLASS = mysql_query($CLASS) or die(mysql_error()) ;
-$row_CLASS = mysql_fetch_array($get_CLASS) ;
+$get_CLASS = mysqli_query($mysqli_link, $CLASS) or die(mysqli_error($mysqli_link)) ;
+$row_CLASS = mysqli_fetch_array($get_CLASS) ;
 if (empty($_POST['manual']) || $_POST['manual'] == 0) {
  $_POST['price'] = ROUND($_POST['cost'] * $row_CLASS['REGITM3'] / $_POST['pkgqty'],2) ;
  
@@ -190,9 +190,9 @@ if (empty($_POST['manual']) || $_POST['manual'] == 0) {
  }
 }
 $updateSQL = sprintf("UPDATE ARINVT SET ITEM='%s', `CLASS`='%s', DESCRIP='%s', COST='%s', PRICE='%s', UPRICE='%s', ONHAND='%s', ONORDER='%s', ORDERPT='%s', ORDERQTY='%s', ORDERED='%s', SUPPLIER='%s', SEQ='%s', VPARTNO='%s', DISPFEE='%s', BDISPFEE='%s', GOVNARC='%s', TAXRATE='%s', PKGQTY='%s', SELLUNIT='%s', MEMO='%s', LABEL='%s', TYPE='%s', DFYES='%s', BULK='%s', MARKUP='%s', EXPDATE = '$expdate[0]', LDATE = '$ldate[0]', MONITOR='%s', AUTOSET='%s', SAFETY='%s', SPECORDER='%s', BARCODE='%s', `COMMENT`='%s', MANUAL='%s', ARINVTYPE='%s' WHERE ITEMID='%s'",
-                       mysql_real_escape_string($_POST['item']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['item']),
 					   $_POST['class'],
-                       mysql_real_escape_string($_POST['descrip']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['descrip']),
                        $_POST['cost'],
                        $_POST['price'],
                        $_POST['uprice'],
@@ -201,7 +201,7 @@ $updateSQL = sprintf("UPDATE ARINVT SET ITEM='%s', `CLASS`='%s', DESCRIP='%s', C
                        $_POST['orderpt'],
                        $_POST['orderqty'],
                        $_POST['ordered'],
-                       mysql_real_escape_string($_POST['supplier']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['supplier']),
                        $_POST['seq'],
                        $_POST['vpartno'],
                        $_POST['dispfee'],
@@ -210,7 +210,7 @@ $updateSQL = sprintf("UPDATE ARINVT SET ITEM='%s', `CLASS`='%s', DESCRIP='%s', C
                        $_POST['taxrate'],
                        $_POST['pkgqty'],
                        $_POST['sellunit'],
-                       mysql_real_escape_string($_POST['memo']),
+                       mysqli_real_escape_string($mysqli_link, $_POST['memo']),
 					   !empty($_POST['label']) ? "1" : "0",
                        $_POST['type'],
                        $_POST['dfyes'],
@@ -227,8 +227,8 @@ $updateSQL = sprintf("UPDATE ARINVT SET ITEM='%s', `CLASS`='%s', DESCRIP='%s', C
                        $itemid
 					   );
 
-mysql_select_db($database_tryconnection, $tryconnection);
-$Result1 = mysql_query($updateSQL, $tryconnection) or die(mysql_error());
+mysqli_select_db($tryconnection, $database_tryconnection);
+$Result1 = mysqli_query($tryconnection, $updateSQL) or die(mysqli_error($mysqli_link));
 if (isset($_POST['save'])){
 header("Location: INVENTORY_SEARCH_SCREEN.php");}
 else {

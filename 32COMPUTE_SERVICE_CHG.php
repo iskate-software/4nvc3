@@ -2,7 +2,7 @@
 
 require_once('../../tryconnection.php'); 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $cutoff = $GET_scdate ;
 $invdte = $GET_invdate ;
@@ -25,69 +25,69 @@ else {
 }
 */
 $scdate1="SELECT STR_TO_DATE('$cutoff','%m/%d/%Y')";
-$scdate2=mysql_query($scdate1, $tryconnection) or die(mysql_error());
-$scdate3=mysql_fetch_array($scdate2);
+$scdate2=mysqli_query($tryconnection, $scdate1) or die(mysqli_error($mysqli_link));
+$scdate3=mysqli_fetch_array($scdate2);
                                       
 $invdte1="SELECT STR_TO_DATE('$invdate','%m/%d/%Y')";
-$invdte2=mysql_query($invdte1, $tryconnection) or die(mysql_error());
-$invdte3=mysql_fetch_array($invdte2);
+$invdte2=mysqli_query($tryconnection, $invdte1) or die(mysqli_error($mysqli_link));
+$invdte3=mysqli_fetch_array($invdte2);
 
 $SC0 = "DROP TEMPORARY TABLE IF EXISTS SC1" ;
-$SC0A = mysql_query($SC0, $tryconnection) or die(mysql_error()) ;
+$SC0A = mysqli_query($tryconnection, $SC0) or die(mysqli_error($mysqli_link)) ;
 
 $SC00 = "DROP TEMPORARY TABLE IF EXISTS SC2" ;
-$SC00A = mysql_query($SC00, $tryconnection) or die(mysql_error()) ;
+$SC00A = mysqli_query($tryconnection, $SC00) or die(mysqli_error($mysqli_link)) ;
 
 $SC1 = "CREATE TEMPORARY TABLE SC1 LIKE ARARECV" ;
-$SC1A = mysql_query($SC1, $tryconnection) or die(mysql_error()) ;
+$SC1A = mysqli_query($tryconnection, $SC1) or die(mysqli_error($mysqli_link)) ;
 
 $SC2 = "ALTER TABLE SC1 DROP COLUMN UNIQUE1" ;
-$SC2A = mysql_query($SC2, $tryconnection) or die(mysql_error()) ;
+$SC2A = mysqli_query($tryconnection, $SC2) or die(mysqli_error($mysqli_link)) ;
 
 $SC3 = "INSERT INTO SC1 (CUSTNO,COMPANY,INVNO,INVDTE,IBAL) SELECT CUSTNO, COMPANY,INVNO,INVDTE,IBAL FROM ARARECV WHERE INVDTE < '$scdate3' ";
-$SC3A = mysql_query($SC3, $tryconnection) or die(mysql_error()) ; 
+$SC3A = mysqli_query($tryconnection, $SC3) or die(mysqli_error($mysqli_link)) ; 
 
 $SC4 = "DELETE FROM SC1 WHERE IBAL = 0"  ;
-$SC4A = mysql_query($SC4, $tryconnection) or die(mysql_error()) ;
+$SC4A = mysqli_query($tryconnection, $SC4) or die(mysqli_error($mysqli_link)) ;
 
 $SC5 = "CREATE TEMPORARY TABLE SC2 LIKE SC1" ;
-$SC5A = mysql_query($SC5, $tryconnection) or die(mysql_error()) ;
+$SC5A = mysqli_query($tryconnection, $SC5) or die(mysqli_error($mysqli_link)) ;
 
 $SC6 = "INSERT INTO SC2 (CUSTNO,COMPANY,IBAL) SELECT CUSTNO,COMPANY,SUM(IBAL) FROM SC1 GROUP BY CUSTNO" ;
-$SC6A = mysql_query($SC6, $tryconnection) or die(mysql_error()) ;
+$SC6A = mysqli_query($tryconnection, $SC6) or die(mysqli_error($mysqli_link)) ;
 
 $SC7 = "UPDATE SC2 JOIN ARCUSTO ON (SC2.CUSTNO = ARCUSTO.CUSTNO) SET IBAL = 0 WHERE ARCUSTO.SVC = 0" ;
-$SC7A = mysql_query($SC7, $tryconnection) or die(mysql_error()) ;
+$SC7A = mysqli_query($tryconnection, $SC7) or die(mysqli_error($mysqli_link)) ;
 
 $SC8 = "DELETE FROM SC2 WHERE IBAL <=0 ";
-$SC8A = mysql_query($SC8, $tryconnection) or die(mysql_error()) ;
+$SC8A = mysqli_query($tryconnection, $SC8) or die(mysqli_error($mysqli_link)) ;
 
 $SC9 = "UPDATE SC2 SET IBAL = IBAL * '$pctg' ";
-$SC9A = mysql_query($SC9, $tryconnection) or die(mysql_error()) ;
+$SC9A = mysqli_query($tryconnection, $SC9) or die(mysqli_error($mysqli_link)) ;
 
 $SC10 = "UPDATE SC2 SET IBAL = '$minchg' WHERE IBAL < '$minchg' ";
-$SC10A = mysql_query($SC10, $tryconnection) or die(mysql_error()) ;
+$SC10A = mysqli_query($tryconnection, $SC10) or die(mysqli_error($mysqli_link)) ;
 
 $SC11 = "UPDATE SC2 SET INVNO = '0000',INVDTE = '$invdte3',PONUM = 'SERVICE CHARGE', TAX = 0, PTAX = 0,  AMTPAID = 0,  DISCOUNT = 0,  REFNO = ' ', SALESMN = ' ',  ITOTAL = IBAL" ;
-$SC11A = mysql_query($SC11, $tryconnection) or die(mysql_error()) ;
+$SC11A = mysqli_query($tryconnection, $SC11) or die(mysqli_error($mysqli_link)) ;
 
 $SC12 = "INSERT INTO ARARECV (INVNO,INVDTE,INVTIME,CUSTNO,COMPANY,SALESMN, PONUM,REFNO, DTEPAID,TAX,PTAX,ITOTAL,DISCOUNT,AMTPAID,IBAL,DATETIME) SELECT INVNO,INVDTE,INVTIME,CUSTNO,COMPANY,SALESMN, PONUM,REFNO, DTEPAID,TAX,PTAX,ITOTAL,DISCOUNT,AMTPAID,IBAL,DATETIME FROM SC2 ";
-$SC12A = mysql_query($SC12, $tryconnection) or die(mysql_error()) ;
+$SC12A = mysqli_query($tryconnection, $SC12) or die(mysqli_error($mysqli_link)) ;
 
 $SC13 = "INSERT INTO ARINVOI (INVNO,INVDTE,INVTIME,CUSTNO,COMPANY, SALESMN,PONUM,REFNO,DTEPAID,TAX,PTAX,ITOTAL,DISCOUNT,AMTPAID,DATETIME) SELECT INVNO,INVDTE,INVTIME,CUSTNO, COMPANY,SALESMN,PONUM,REFNO,DTEPAID,TAX,PTAX,ITOTAL,DISCOUNT,AMTPAID,DATETIME FROM SC2" ;
-$SC13A = mysql_query($SC13, $tryconnection) or die(mysql_error()) ;
+$SC13A = mysqli_query($tryconnection, $SC13) or die(mysqli_error($mysqli_link)) ;
 
 $SC14 = "UPDATE ARINVOI JOIN ARARECV ON (ARINVOI.INVNO = ARARECV.INVNO AND ARINVOI.CUSTNO = ARARECV.CUSTNO AND ARINVOI.INVDTE = ARARECV.INVDTE) SET ARINVOI.UNIQUE1 = ARARECV.UNIQUE1 ";
-$SC14A = mysql_query($SC14, $tryconnection) or die(mysql_error()) ;
+$SC14A = mysqli_query($tryconnection, $SC14) or die(mysqli_error($mysqli_link)) ;
 
 $SC15 = "SELECT SUM(IBAL) FROM SC2" ;
-$SC15A = mysql_query($SC15, $tryconnection) or die(mysql_error()) ;
+$SC15A = mysqli_query($tryconnection, $SC15) or die(mysqli_error($mysqli_link)) ;
 
-$row_SC15 = mysql_fetch_assoc($SC15A) ;
+$row_SC15 = mysqli_fetch_assoc($SC15A) ;
 $sctot = $row_SC15['IBAL'] ;
 
 $SC16 = "INSERT INTO SALESCAT SET INVNO = '0000', INVDTE = '$invdate',INVMAJ = 98, INVREVCAT = 98, INVDECLINE = 0, INVTOT = '$sctot' ";
-$SC16A = mysql_query($SC16, $tryconnection) or die(mysql_error()) ;
+$SC16A = mysqli_query($tryconnection, $SC16) or die(mysqli_error($mysqli_link)) ;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/DVMBasicTemplate.dwt" codeOutsideHTMLIsLocked="false" -->

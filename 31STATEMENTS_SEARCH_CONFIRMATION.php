@@ -2,7 +2,7 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $_SESSION['minbal'] = $_POST['minbal'] ;
 $_POST['startname'] = trim($_POST['startname']) ;
 $_POST['endname'] = trim($_POST['endname']) ;

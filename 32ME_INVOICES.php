@@ -2,24 +2,24 @@
 session_start();
 require_once('../../tryconnection.php'); 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 //$taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
-$closedatexx= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
-$closedate=mysql_fetch_array($closedatexx);
+$closedatexx= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysqli_error($mysqli_link));
+$closedate=mysqli_fetch_array($closedatexx);
 
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
-$clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
-$clm1 = mysql_fetch_array($clm) ;
+$clm = mysqli_query($tryconnection, $closemonth) or die(mysqli_error($mysqli_link)) ;
+$clm1 = mysqli_fetch_array($clm) ;
 
 $clm2 = $clm1[0] ;
 
 $query_TAX = "SELECT HTAXNAME, HOTAXNAME, HGSTNO, DATE_FORMAT(HGSTDATE,'%m/%d/%Y') AS HGSTDATE FROM CRITDATA";
-$TAX = mysql_query($query_TAX, $tryconnection) or die(mysql_error());
-$row_TAX = mysql_fetch_array($TAX);
+$TAX = mysqli_query($tryconnection, $query_TAX) or die(mysqli_error($mysqli_link));
+$row_TAX = mysqli_fetch_array($TAX);
 $nametax = $row_TAX['HTAXNAME'] ;
 /*
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
@@ -47,50 +47,50 @@ $DOIT5 = mysql_query($SETUP3, $tryconnection ) or die(mysql_error()) ;
 //*/
 
 $search_CURCAN = "SELECT SUM(ITOTAL) AS Total_CURCAN FROM ARTEMPI WHERE UPPER(REFNO) = 'CANC.' AND INVNO <> 'CANCLD' AND ITOTAL > 0" ;
-$ICANCC = mysql_query($search_CURCAN, $tryconnection ) or die(mysql_error()) ;
-$row_ICANCC = mysql_fetch_array($ICANCC) ;
+$ICANCC = mysqli_query($tryconnection, $search_CURCAN) or die(mysqli_error($mysqli_link)) ;
+$row_ICANCC = mysqli_fetch_array($ICANCC) ;
 
 $search_CANCSC = "SELECT SUM(ITOTAL) AS Total_CANSC FROM ARTEMPI WHERE UPPER(REFNO) = 'CANC.' AND INVNO = '0000' AND ITOTAL < 0" ;
-$ICANCSC = mysql_query($search_CANCSC, $tryconnection ) or die(mysql_error()) ;
-$row_ICANCSC = mysql_fetch_array($ICANCSC) ;
+$ICANCSC = mysqli_query($tryconnection, $search_CANCSC) or die(mysqli_error($mysqli_link)) ;
+$row_ICANCSC = mysqli_fetch_array($ICANCSC) ;
 
 $search_CANCNG = "SELECT SUM(ITOTAL) AS Total_CANCNG FROM ARTEMPI WHERE UPPER(REFNO) = 'CANC.' AND INVNO <> '0000' AND INVNO <> 'CANCLD' AND ITOTAL < 0" ;
-$CANCNG = mysql_query($search_CANCNG, $tryconnection ) or die(mysql_error()) ;
+$CANCNG = mysqli_query($tryconnection, $search_CANCNG) or die(mysqli_error($mysqli_link)) ;
 
 $search_PSTCC = "SELECT SUM(PTAX) AS Total_PSTCC FROM ARTEMPI WHERE UPPER(REFNO) = 'CANC.'" ;
-$IPSTCC = mysql_query($search_PSTCC,$tryconnection) or die(mysql_error()) ;
+$IPSTCC = mysqli_query($tryconnection, $search_PSTCC) or die(mysqli_error($mysqli_link)) ;
 
 $search_GSTCC = "SELECT SUM(TAX) AS Total_GSTCC FROM ARTEMPI WHERE UPPER(REFNO) = 'CANC.'" ;
-$IGSTCC = mysql_query($search_GSTCC,$tryconnection) or die(mysql_error()) ;
+$IGSTCC = mysqli_query($tryconnection, $search_GSTCC) or die(mysqli_error($mysqli_link)) ;
 
 ///* Searches for the previous month's totals. */
 
 $search_OLDCAN = "SELECT SUM(ITOTAL) AS Total_OLDCAN FROM ARTEMPI WHERE UPPER(REFNO) = 'CANC.' AND INVNO <> 'CANCLD' " ;
-$ICANCO = mysql_query($search_OLDCAN, $tryconnection ) or die(mysql_error()) ;
-$row_ICANCO = mysql_fetch_array($ICANCO) ;
+$ICANCO = mysqli_query($tryconnection, $search_OLDCAN) or die(mysqli_error($mysqli_link)) ;
+$row_ICANCO = mysqli_fetch_array($ICANCO) ;
 
 $search_OCANSC = "SELECT SUM(ITOTAL) AS Total_OCANSC FROM ARTEMPI WHERE UPPER(REFNO) = 'CANC.' AND INVNO = '0000' " ;
-$OCANSC = mysql_query($search_OCANSC, $tryconnection ) or die(mysql_error()) ;
-$row_OCANSC = mysql_fetch_array($OCANSC) ;
+$OCANSC = mysqli_query($tryconnection, $search_OCANSC) or die(mysqli_error($mysqli_link)) ;
+$row_OCANSC = mysqli_fetch_array($OCANSC) ;
 
 $search_PSTOC = "SELECT SUM(PTAX) AS Total_PSTOC FROM ARTEMPI WHERE INVNO = 'CANCLD'" ;
-$IPSTCO = mysql_query($search_PSTOC,$tryconnection) or die(mysql_error()) ;
-$row_IPSTCO = mysql_fetch_array($IPSTCO) ;
+$IPSTCO = mysqli_query($tryconnection, $search_PSTOC) or die(mysqli_error($mysqli_link)) ;
+$row_IPSTCO = mysqli_fetch_array($IPSTCO) ;
 
 $search_GSTOC = "SELECT SUM(TAX) AS Total_GSTOC FROM ARTEMPI WHERE INVNO = 'CANCLD'" ;
-$IGSTCO = mysql_query($search_GSTOC,$tryconnection) or die(mysql_error()) ;
-$row_IGSTCO = mysql_fetch_array($IGSTCO) ;
+$IGSTCO = mysqli_query($tryconnection, $search_GSTOC) or die(mysqli_error($mysqli_link)) ;
+$row_IGSTCO = mysqli_fetch_array($IGSTCO) ;
 
 ///* Now the current month's tax totals. */
 
 $search_GST = "SELECT SUM(TAX) AS Total_IGST FROM ARTEMPI WHERE INSTR(REFNO,'CANC') = 0 " ;
-$IGST   = mysql_query($search_GST, $tryconnection ) or die(mysql_error()) ;
+$IGST   = mysqli_query($tryconnection, $search_GST) or die(mysqli_error($mysqli_link)) ;
 
 $search_PST = "SELECT SUM(PTAX) AS Total_IPST FROM ARTEMPI WHERE INSTR(REFNO,'CANC') = 0 " ;
-$IPST   = mysql_query($search_PST, $tryconnection ) or die(mysql_error()) ;
+$IPST   = mysqli_query($tryconnection, $search_PST) or die(mysqli_error($mysqli_link)) ;
 
 $search_ITOTAL = "SELECT SUM(ITOTAL) AS Total_IGROSS FROM ARTEMPI WHERE INSTR(REFNO,'CANC') = 0 " ;
-$ITOTAL   = mysql_query($search_ITOTAL, $tryconnection ) or die(mysql_error()) ;
+$ITOTAL   = mysqli_query($tryconnection, $search_ITOTAL) or die(mysqli_error($mysqli_link)) ;
 
 
 ///* Delete all the cancelled from the raw data, as the totals have been extracted, and will be presented in 
@@ -98,38 +98,38 @@ $ITOTAL   = mysql_query($search_ITOTAL, $tryconnection ) or die(mysql_error()) ;
 //Also, count the invoices for later insertion into PRACTICE.*/
 
 $M_invo1 = "DELETE FROM ARTEMPI WHERE INSTR(REFNO,'CANC') <> 0 " ;
-$Doit1 = mysql_query($M_invo1, $tryconnection) or die(mysql_error()) ;
+$Doit1 = mysqli_query($tryconnection, $M_invo1) or die(mysqli_error($mysqli_link)) ;
 
 $M_invo2 = "UPDATE ARTEMPI SET COMPANY = 'Totals this date'" ;
-$Doit2 = mysql_query($M_invo2, $tryconnection) or die(mysql_error()) ;
+$Doit2 = mysqli_query($tryconnection, $M_invo2) or die(mysqli_error($mysqli_link)) ;
 
 $M_invo3 = "SELECT COMPANY, COUNT(COMPANY) AS MINV FROM ARTEMPI" ; 
-$invo3 = mysql_query($M_invo3, $tryconnection) or die(mysql_error()) ;
-$MINV = mysql_fetch_array($invo3);
+$invo3 = mysqli_query($tryconnection, $M_invo3) or die(mysqli_error($mysqli_link)) ;
+$MINV = mysqli_fetch_array($invo3);
 
 $M_invo4 = "SELECT COMPANY, SUM(ITOTAL) AS MTINVSL FROM ARTEMPI" ;
-$invo4 = mysql_query($M_invo4, $tryconnection) or die(mysql_error()) ;
-$MTINVSL = mysql_fetch_array($invo4);
+$invo4 = mysqli_query($tryconnection, $M_invo4) or die(mysqli_error($mysqli_link)) ;
+$MTINVSL = mysqli_fetch_array($invo4);
 
 $M_invo5 = "SELECT COMPANY, SUM(TAX) AS MTGST FROM ARTEMPI" ;
-$invo5 = mysql_query($M_invo5, $tryconnection) or die(mysql_error()) ;
-$MTGST = mysql_fetch_array($invo5);
+$invo5 = mysqli_query($tryconnection, $M_invo5) or die(mysqli_error($mysqli_link)) ;
+$MTGST = mysqli_fetch_array($invo5);
 
 $M_invo6 = "SELECT COMPANY, SUM(TAX) AS MTPST FROM ARTEMPI" ;
-$invo6 = mysql_query($M_invo6, $tryconnection) or die(mysql_error()) ;
-$MTPST = mysql_fetch_array($invo6);
+$invo6 = mysqli_query($tryconnection, $M_invo6) or die(mysqli_error($mysqli_link)) ;
+$MTPST = mysqli_fetch_array($invo6);
 
 $M_invo7 = "ALTER TABLE ARTEMPI ADD INDEX IDAYOF (INVDTE) ";
 //$invo7 = mysql_query($M_invo7, $tryconnection) or die(mysql_error()) ;
 
 
 $Sum_INVMONTH = "SELECT DATE_FORMAT(INVDTE, '%m/%d/%Y') AS INVDTE, COMPANY, SUM(ITOTAL) AS ITOTAL, SUM(TAX) AS TAX, SUM(PTAX) AS PTAX FROM ARTEMPI GROUP BY INVDTE ";
-$INVMONTH = mysql_query($Sum_INVMONTH, $tryconnection) or die(mysql_error()) ;
-$row_INVMONTH = mysql_fetch_array($INVMONTH);
+$INVMONTH = mysqli_query($tryconnection, $Sum_INVMONTH) or die(mysqli_error($mysqli_link)) ;
+$row_INVMONTH = mysqli_fetch_array($INVMONTH);
 
 $query_SUM = "SELECT SUM(ITOTAL) AS ITOTAL, SUM(TAX) AS TAX, SUM(PTAX) AS PTAX, SUM(IBAL) AS IBAL, SUM(AMTPAID) AS AMTPAID FROM ARTEMPI";
-$SUM = mysql_query($query_SUM, $tryconnection) or die(mysql_error()) ;
-$row_SUM = mysql_fetch_array($SUM);
+$SUM = mysqli_query($tryconnection, $query_SUM) or die(mysqli_error($mysqli_link)) ;
+$row_SUM = mysqli_fetch_array($SUM);
 
 
 
@@ -191,7 +191,7 @@ $row_SUM = mysql_fetch_array($SUM);
     <td align="right" class="Verdana13"></td>
   </tr>';
   }
-  while ($row_INVMONTH=mysql_fetch_assoc($INVMONTH));
+  while ($row_INVMONTH=mysqli_fetch_assoc($INVMONTH));
   
   ?>
   <tr class="Verdana13B">
