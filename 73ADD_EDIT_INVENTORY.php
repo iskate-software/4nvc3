@@ -57,7 +57,7 @@ $itemid=$_GET['itemid'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_INVENTORY = "SELECT *, DATE_FORMAT(EXPDATE, '%m/%d/%Y') AS EXPDATE, DATE_FORMAT(LDATE, '%m/%d/%Y') AS LDATE, DATE_FORMAT(LASTSALE, '%m/%d/%Y') AS LASTSALE FROM ARINVT WHERE ITEMID = '$itemid'";
 $INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
-$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
+$row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 
 /////////////////////////////PAGING WITHIN INVENTORY FILES/////////////////////////
@@ -66,13 +66,13 @@ $VIEW= mysql_query($query_VIEW, $tryconnection) or die(mysql_error());
 
 $query_INVENTORY2="SELECT * FROM INVENTORY2";
 $INVENTORY2= mysql_query($query_INVENTORY2, $tryconnection) or die(mysql_error());
-$row_INVENTORY2 = mysql_fetch_assoc($INVENTORY2);
+$row_INVENTORY2 = mysqli_fetch_assoc($INVENTORY2);
 
 $ids= array();
 do {
 $ids[]=$row_INVENTORY2['ITEMID'];
 }
-while ($row_INVENTORY2 = mysql_fetch_assoc($INVENTORY2));
+while ($row_INVENTORY2 = mysqli_fetch_assoc($INVENTORY2));
 
 $key=array_search($_GET['itemid'],$ids);
 
@@ -88,14 +88,14 @@ header("Location: ADD_EDIT_INVENTORY.php?itemid=$_POST[invpointer]&check=");
 else if (isset($_POST['check']) && $itemid=="0") {
 $expquery="SELECT STR_TO_DATE('$_POST[expdate]','%m/%d/%Y');";
 $expdate1= mysql_query($expquery, $tryconnection) or die(mysql_error());
-$expdate=mysql_fetch_array($expdate1);
+$expdate=mysqli_fetch_array($expdate1);
 $ldatequery="SELECT STR_TO_DATE('$_POST[ldate]','%m/%d/%Y');";
 $ldate1= mysql_query($ldatequery, $tryconnection) or die(mysql_error());
-$ldate=mysql_fetch_array($ldate1);
+$ldate=mysqli_fetch_array($ldate1);
 // do the class check and update. If not there, default to a markup of 1.
 $CLASS = "SELECT REGITM3,REGITM6,ROUNDER1,MINPRICE1,ROUNDER4,MINPRICE4 FROM FORMULA1 WHERE CLASS = '$_POST[class]' LIMIT 1" ;
 $get_CLASS = mysql_query($CLASS) or die(mysql_error()) ;
-$row_CLASS = mysql_fetch_array($get_CLASS) ;
+$row_CLASS = mysqli_fetch_array($get_CLASS) ;
 if (empty($_POST['manual']) || $_POST['manual'] == 0) {
  $_POST['price']  = ROUND($_POST['cost'] * $row_CLASS['REGITM3'] / $_POST['pkgqty'],2) ;
  $_POST['uprice'] = ROUND($_POST['cost'] * $row_CLASS['REGITM6'] / $_POST['pkgqty'],2) ;
@@ -162,14 +162,14 @@ header("Location: ADD_EDIT_INVENTORY.php?itemid=$_POST[invpointer]&check=");}
 else if (isset($_POST['check']) && $itemid!="0") {
 $expquery="SELECT STR_TO_DATE('$_POST[expdate]','%m/%d/%Y');";
 $expdate1= mysql_query($expquery, $tryconnection) or die(mysql_error());
-$expdate=mysql_fetch_array($expdate1);
+$expdate=mysqli_fetch_array($expdate1);
 $ldatequery="SELECT STR_TO_DATE('$_POST[ldate]','%m/%d/%Y');";
 $ldate1= mysql_query($ldatequery, $tryconnection) or die(mysql_error());
-$ldate=mysql_fetch_array($ldate1);
+$ldate=mysqli_fetch_array($ldate1);
 // do the class check and update. If not there, default to a markup of 1.
 $CLASS = "SELECT REGITM3,REGITM6,ROUNDER1,MINPRICE1,ROUNDER4,MINPRICE4 FROM FORMULA1 WHERE CLASS = '$_POST[class]' LIMIT 1" ;
 $get_CLASS = mysql_query($CLASS) or die(mysql_error()) ;
-$row_CLASS = mysql_fetch_array($get_CLASS) ;
+$row_CLASS = mysqli_fetch_array($get_CLASS) ;
 if (empty($_POST['manual']) || $_POST['manual'] == 0) {
  $_POST['price'] = ROUND($_POST['cost'] * $row_CLASS['REGITM3'] / $_POST['pkgqty'],2) ;
  

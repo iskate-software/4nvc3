@@ -12,7 +12,7 @@ $Doctor = mysql_query($query_Doctor, $tryconnection) or die(mysql_error());
 $docss = array() ;
 $docsl = array() ;
 $key = 0 ;
- while ($row_Doctor = mysql_fetch_assoc($Doctor)) {
+ while ($row_Doctor = mysqli_fetch_assoc($Doctor)) {
   $docss[] = $row_Doctor['DOCTOR'] ;
   $docsl[] = $row_Doctor['DOCTOR'] ;
   $key++ ;

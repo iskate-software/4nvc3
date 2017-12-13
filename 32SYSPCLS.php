@@ -60,14 +60,14 @@ mysql_select_db($database_tryconnection, $tryconnection);
 echo 'Step 1 ' ;
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
 $closedate1= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
-$closedate=mysql_fetch_array($closedate1);
+$closedate=mysqli_fetch_array($closedate1);
 
 // now do funny things with this, to cope with the fact that most transactions have hour,min,sec of 00:00:00,
 // but those that do not, get cut out of the <= comparison. So add 23 hours and 55 mins to the base date.
 
 $Round_about_midnight = "SELECT DATE_ADD('$closedate[0]', INTERVAL '23:55' HOUR_MINUTE) AS LATER" ;
 $Bump_it = mysql_query($Round_about_midnight, $tryconnection) or die(mysql_error()) ;
-$Get_Bump = mysql_fetch_assoc($Bump_it) ;
+$Get_Bump = mysqli_fetch_assoc($Bump_it) ;
 $closedate[0] = $Get_Bump['LATER'] ;
 
 echo 'Step 2 ' ;
@@ -80,12 +80,12 @@ $scour2 = mysql_query($Clean_up2, $tryconnection) or die(mysql_error()) ;
 
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
 $DOIT1 = mysql_query($LIMIT1, $tryconnection ) or die(mysql_error()) ;
-$FIRSTINV = mysql_fetch_array($DOIT1);
+$FIRSTINV = mysqli_fetch_array($DOIT1);
 
 echo 'Step 3 ' ;
 $LIMIT2 = "SELECT LASTINV FROM PREFER LIMIT 1" ;
 $DOIT2 = mysql_query($LIMIT2, $tryconnection ) or die(mysql_error()) ;
-$LASTINV = mysql_fetch_array($DOIT2);
+$LASTINV = mysqli_fetch_array($DOIT2);
 
 echo 'Step 4 ' ;
 $SETUP1 = "DROP TEMPORARY TABLE IF EXISTS ARTEMP" ;
@@ -98,16 +98,16 @@ $DOIT5 = mysql_query($SETUP3, $tryconnection ) or die(mysql_error()) ;
 echo 'Step 5 ';
 $M_invo3 = "SELECT COUNT(INVNO) AS MINV FROM ARTEMP" ; 
 $Doit3 = mysql_query($M_invo3, $tryconnection) or die(mysql_error()) ;
-$MINV = mysql_fetch_assoc($Doit3);
+$MINV = mysqli_fetch_assoc($Doit3);
 echo 'Step 6 ' ;
 $M_invo4 = "SELECT SUM(ITOTAL) AS MTINVSL FROM ARTEMP" ;
 $Doit4 = mysql_query($M_invo4, $tryconnection) or die(mysql_error()) ;
-$MTINVSL = mysql_fetch_assoc($Doit4);
+$MTINVSL = mysqli_fetch_assoc($Doit4);
 echo 'Step 7 ' ;
 
 $M_invo5 = "SELECT SUM(TAX) AS MTGST FROM ARTEMP" ;
 $Doit5 = mysql_query($M_invo5, $tryconnection) or die(mysql_error()) ;
-$MTGST = mysql_fetch_assoc($Doit5);
+$MTGST = mysqli_fetch_assoc($Doit5);
 echo 'Step 8 ' ;
 
 // Now the cash:
@@ -129,7 +129,7 @@ echo 'Step 11 ' ;
 
 $M_cash2 = "SELECT SUM(AMTPAID) AS MTCASHSL FROM ARTEMP  WHERE REFNO <> 'Corrn.' ";
 $Doit8 = mysql_query($M_cash2, $tryconnection) or die(mysql_error()) ;
-$MTCASHSL = mysql_fetch_assoc($Doit8);
+$MTCASHSL = mysqli_fetch_assoc($Doit8);
 echo 'Step 12 ' ;
 
 //Now do the real month end closing..
@@ -234,17 +234,17 @@ echo 'Step 35 ' ;
 echo 'Step 36 ' ;
 $CUST_2 = "SELECT COUNT(CUSTNO) AS MCUST FROM ARCUSTO " ;
 $CUST_2q = mysql_query($CUST_2, $tryconnection) or die(mysql_error()) ; 
-$MCUST = mysql_fetch_assoc($CUST_2q);
+$MCUST = mysqli_fetch_assoc($CUST_2q);
 echo 'Step 37 ' ;
 //
 $CUST_3 = "SELECT COUNT(CUSTNO) AS MCUST2 FROM ARCUSTO WHERE  DATE_SUB('$closedate[0]', INTERVAL 365 DAY) < LDATE" ;
 $CUST_3q = mysql_query($CUST_3, $tryconnection) or die(mysql_error()) ;
-$MCUST2 = mysql_fetch_assoc($CUST_3q);
+$MCUST2 = mysqli_fetch_assoc($CUST_3q);
 echo 'Step 38 ' ;
 
 $CUST_4 = "SELECT COUNT(CUSTNO) AS MCUST3 FROM ARCUSTO  WHERE DATE_SUB('$closedate[0]', INTERVAL 730 DAY) < LDATE " ;
 $CUST_4q = mysql_query($CUST_4, $tryconnection) or die(mysql_error()) ;
-$MCUST3 = mysql_fetch_assoc($CUST_4q);
+$MCUST3 = mysqli_fetch_assoc($CUST_4q);
 echo 'Step 39 ' ;
 
 ////Magic required to recalculate balances from ararecv 
@@ -260,7 +260,7 @@ $NEGIBAL=mysql_query($select_NEGIBAL, $tryconnection) or die(mysql_error());
 // $row_NEGIBAL=mysql_fetch_assoc($NEGIBAL);
 echo 'Step 40 ' ;
 $invcust=array();
-while ($row_NEGIBAL=mysql_fetch_assoc($NEGIBAL)) {
+while ($row_NEGIBAL=mysqli_fetch_assoc($NEGIBAL)) {
 $invcust[]=$row_NEGIBAL['CUSTNO'];
 } //while ($row_NEGIBAL=mysql_fetch_assoc($NEGIBAL));
 
@@ -269,7 +269,7 @@ foreach ($invcust as $invcust2){
 
  $select_SUMNEGIBAL="SELECT SUM(IBAL) AS IBAL FROM ARARECV WHERE IBAL<0 AND CUSTNO='$invcust2' AND INVDTE < '$closedate[0]' ";
  $SUMNEGIBAL=mysql_query($select_SUMNEGIBAL, $tryconnection) or die(mysql_error());
- $row_SUMNEGIBAL=mysql_fetch_assoc($SUMNEGIBAL);
+ $row_SUMNEGIBAL=mysqli_fetch_assoc($SUMNEGIBAL);
 
  echo 'Step 42 ' ;
 
@@ -283,7 +283,7 @@ foreach ($invcust as $invcust2){
  $IBALINVNO=mysql_query($select_IBALINVNO, $tryconnection) or die(mysql_error());
 
 
- while ($row_POSIBAL=mysql_fetch_assoc($IBALINVNO)) {
+ while ($row_POSIBAL=mysqli_fetch_assoc($IBALINVNO)) {
  
 	  if ($sumnegibal > 0 ) {
 		if ($row_POSIBAL['IBAL'] >= $sumnegibal){
@@ -319,22 +319,22 @@ $Query_empty = mysql_query($empty_out, $tryconnection) or die(mysql_error()) ;
 
 $PETM_1 = "SELECT COUNT(petid) AS MPATNT FROM PETMAST WHERE PFIRSTDATE <= '$closedate[0]'" ;
 $PETM_1q = mysql_query($PETM_1, $tryconnection) or die(mysql_error()) ;
-$MPATNT = mysql_fetch_assoc($PETM_1q);
+$MPATNT = mysqli_fetch_assoc($PETM_1q);
 echo 'Step 45 ' ;
 
 $PETM_2 = "SELECT COUNT(petid) AS ACTIVE_PATS FROM PETMAST WHERE (PDEAD + PMOVED = 0) AND PFIRSTDATE <= '$closedate[0]' ";
 $PETM_2q = mysql_query($PETM_2, $tryconnection) or die(mysql_error()) ;
-$ACTIVE_PATS = mysql_fetch_assoc($PETM_2q);
+$ACTIVE_PATS = mysqli_fetch_assoc($PETM_2q);
 echo 'Step 46 ' ;
 
 $PETM_3 = "SELECT COUNT(petid) AS ACT_PATS2 FROM PETMAST WHERE (DATE_SUB('$closedate[0]', INTERVAL 365 DAY) < PLASTDATE) AND (PDEAD + PMOVED = 0) " ;
 $PETM_3q = mysql_query($PETM_3, $tryconnection) or die(mysql_error()) ;
-$ACT_PATS2 = mysql_fetch_assoc($PETM_3q);
+$ACT_PATS2 = mysqli_fetch_assoc($PETM_3q);
 echo 'Step 47 ' ;
 
 $PETM_4 = "SELECT COUNT(petid) AS ACT_PATS3 FROM PETMAST WHERE (DATE_SUB('$closedate[0]', INTERVAL 730 DAY) < PLASTDATE) AND (PDEAD + PMOVED = 0) ";
 $PETM_4q = mysql_query($PETM_4, $tryconnection) or die(mysql_error()) ;
-$ACT_PATS3 = mysql_fetch_assoc($PETM_4q);
+$ACT_PATS3 = mysqli_fetch_assoc($PETM_4q);
 echo 'Step 48 ' ;
 
 

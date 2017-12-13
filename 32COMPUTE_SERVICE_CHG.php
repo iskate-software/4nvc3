@@ -26,11 +26,11 @@ else {
 */
 $scdate1="SELECT STR_TO_DATE('$cutoff','%m/%d/%Y')";
 $scdate2=mysql_query($scdate1, $tryconnection) or die(mysql_error());
-$scdate3=mysql_fetch_array($scdate2);
+$scdate3=mysqli_fetch_array($scdate2);
                                       
 $invdte1="SELECT STR_TO_DATE('$invdate','%m/%d/%Y')";
 $invdte2=mysql_query($invdte1, $tryconnection) or die(mysql_error());
-$invdte3=mysql_fetch_array($invdte2);
+$invdte3=mysqli_fetch_array($invdte2);
 
 $SC0 = "DROP TEMPORARY TABLE IF EXISTS SC1" ;
 $SC0A = mysql_query($SC0, $tryconnection) or die(mysql_error()) ;
@@ -83,7 +83,7 @@ $SC14A = mysql_query($SC14, $tryconnection) or die(mysql_error()) ;
 $SC15 = "SELECT SUM(IBAL) FROM SC2" ;
 $SC15A = mysql_query($SC15, $tryconnection) or die(mysql_error()) ;
 
-$row_SC15 = mysql_fetch_assoc($SC15A) ;
+$row_SC15 = mysqli_fetch_assoc($SC15A) ;
 $sctot = $row_SC15['IBAL'] ;
 
 $SC16 = "INSERT INTO SALESCAT SET INVNO = '0000', INVDTE = '$invdate',INVMAJ = 98, INVREVCAT = 98, INVDECLINE = 0, INVTOT = '$sctot' ";

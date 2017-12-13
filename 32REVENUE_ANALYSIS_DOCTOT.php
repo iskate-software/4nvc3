@@ -8,19 +8,19 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
 $DOIT1 = mysql_query($LIMIT1, $tryconnection ) or die(mysql_error()) ;
-$FIRSTINV = mysql_fetch_array($DOIT1);
+$FIRSTINV = mysqli_fetch_array($DOIT1);
 
 $LIMIT2 = "SELECT LASTINV FROM PREFER LIMIT 1" ;
 $DOIT2 = mysql_query($LIMIT2, $tryconnection ) or die(mysql_error()) ;
-$LASTINV = mysql_fetch_array($DOIT2);
+$LASTINV = mysqli_fetch_array($DOIT2);
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
 $closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
-$closedate=mysql_fetch_array($closedate);
+$closedate=mysqli_fetch_array($closedate);
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
 $clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
-$clm1 = mysql_fetch_array($clm) ;
+$clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 // The total Revenue analysis which rolls up all of the species into a single report.
 // Average invoice per doctor is also calculated. The Doctor file is the source of the data,
@@ -49,7 +49,7 @@ $DOCAVG5 = mysql_query($DOCTAB5, $tryconnection) or die(mysql_error()) ;
 
 // do the species totals
 
-while ($row_T = mysql_fetch_assoc($DOCAVG4)) {
+while ($row_T = mysqli_fetch_assoc($DOCAVG4)) {
  $tot = $row_T['INVTOT'] ;
  $doc = $row_T['INVORDDOC'] ;
  $lgsm = $row_T['INVLGSM'] ;
@@ -91,7 +91,7 @@ while ($row_T = mysql_fetch_assoc($DOCAVG4)) {
  
 // The invoice totals
 
-while ($row_S = mysql_fetch_assoc($DOCAVG4A)) {
+while ($row_S = mysqli_fetch_assoc($DOCAVG4A)) {
  $inv = $row_S['INVTOT'] ;
  $doc = $row_S['INVORDDOC'] ;
 
@@ -100,7 +100,7 @@ while ($row_S = mysql_fetch_assoc($DOCAVG4A)) {
  
 }
 
-while ($row_T = mysql_fetch_assoc($DOCAVG5)) {
+while ($row_T = mysqli_fetch_assoc($DOCAVG5)) {
  $inv = $row_T['INVNO'] ;
  $doc = $row_T['INVORDDOC'] ;
  $DOCTAB8 = "UPDATE DOCTAB SET INVOICES = '$inv' WHERE DOCTOR = '$doc' LIMIT 1" ;

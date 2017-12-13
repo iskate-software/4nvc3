@@ -12,11 +12,11 @@ $minchg = $_GET['minsvchg'] ;
 
 $scdate1="SELECT STR_TO_DATE('$scdate','%m/%d/%Y')";
 $scdate2=mysql_query($scdate1, $tryconnection) or die(mysql_error());
-$scdate3=mysql_fetch_array($scdate2);
+$scdate3=mysqli_fetch_array($scdate2);
                                       
 $invdte1="SELECT STR_TO_DATE('$invdate','%m/%d/%Y')";
 $invdte2=mysql_query($invdte1, $tryconnection) or die(mysql_error());
-$invdte3=mysql_fetch_array($invdte2);
+$invdte3=mysqli_fetch_array($invdte2);
 
 $SC0 = "DROP TEMPORARY TABLE IF EXISTS SC1" ;
 $SC0A = mysql_query($SC0, $tryconnection) or die(mysql_error()) ;
@@ -59,7 +59,7 @@ $SC11A = mysql_query($SC11, $tryconnection) or die(mysql_error()) ;
 
 $SC15 = "SELECT SUM(IBAL) AS IBAL FROM SC2" ;
 $SC15A = mysql_query($SC15, $tryconnection) or die(mysql_error()) ;
-$row_SC15B = mysql_fetch_assoc($SC15A) ;
+$row_SC15B = mysqli_fetch_assoc($SC15A) ;
 $sctot = $row_SC15B['IBAL'] ;
 
 $search_ARINVOI="SELECT INVNO,SC2.CUSTNO,CONCAT(ARCUSTO.COMPANY,', ',ARCUSTO.CONTACT) AS 'COMPANY', DATE_FORMAT(INVDTE, '%m/%d/%Y') AS 'INVDTE',ITOTAL,TAX,AMTPAID,IBAL FROM SC2 JOIN ARCUSTO ON (SC2.CUSTNO = ARCUSTO.CUSTNO) ORDER BY ARCUSTO.COMPANY,CONTACT ASC";
@@ -68,21 +68,21 @@ $search_TAX = "SELECT SUM(TAX) AS Total_TAX FROM SC2";
 $search_PST = "SELECT SUM(PTAX) AS Total_PST FROM SC2";
 
 $ARINVOI=mysql_query($search_ARINVOI, $tryconnection ) or die(mysql_error());
-$row_ARINVOI=mysql_fetch_assoc($ARINVOI);
+$row_ARINVOI=mysqli_fetch_assoc($ARINVOI);
 
 $NET = mysql_query($search_NET, $tryconnection ) or die(mysql_error()) ;
 $TAX = mysql_query($search_TAX, $tryconnection ) or die(mysql_error()) ;
 $PST = mysql_query($search_PST, $tryconnection ) or die(mysql_error()) ;
 
-$row_NET = mysql_fetch_array($NET) ;
-$row_TAX = mysql_fetch_array($TAX) ;
-$row_PST = mysql_fetch_array($PST) ;
+$row_NET = mysqli_fetch_array($NET) ;
+$row_TAX = mysqli_fetch_array($TAX) ;
+$row_PST = mysqli_fetch_array($PST) ;
 
 $totalsc = $row_NET + $row_TAX + $row_PST ;
 
 $SCCHECK = "SELECT COUNT(INVNO) AS INVNO FROM ARARECV WHERE INVNO = '0000' AND INVDTE = '$invdte3[0]' AND IBAL > 0" ;
 $get_check=mysql_query($SCCHECK, $tryconnection) or die(mysql_error()) ;
-$row_SCCHECK = mysql_fetch_assoc($get_check) ;
+$row_SCCHECK = mysqli_fetch_assoc($get_check) ;
 $check = $row_SCCHECK['INVNO'] ;
 
 if ($check[0] == 0 ) {
@@ -105,7 +105,7 @@ $SC16A = mysql_query($SC16, $tryconnection) or die(mysql_error()) ;
 else {
 $SCCHECK1 = "SELECT SUM(IBAL) AS IBAL FROM ARARECV WHERE INVNO = '0000' AND INVDTE = '$invdte3[0]' AND IBAL > 0" ;
 $get_check1=mysql_query($SCCHECK1, $tryconnection) or die(mysql_error()) ;
-$row_SCCHECK1 = mysql_fetch_assoc($get_check1) ;
+$row_SCCHECK1 = mysqli_fetch_assoc($get_check1) ;
 $totalbilled = $row_SCCHECK1['IBAL'] ;
 }
 
@@ -309,7 +309,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <td width="65" align="right" class="Verdana13">'.$row_ARINVOI['AMTPAID'].'</td>
   </tr>';
   }
-  while ($row_ARINVOI=mysql_fetch_assoc($ARINVOI));
+  while ($row_ARINVOI=mysqli_fetch_assoc($ARINVOI));
   } else {
   echo '<br /><br /><br /><tr><td class="Verdana13BRed" align="center">'.' There are already '.$check[0] . '  invoices for this date, totalling ' . $totalbilled[0] .'</td></tr>' ;
   echo '<tr> <td &nbsp; ></td></tr> ' ;

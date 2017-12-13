@@ -5,7 +5,7 @@ require_once('../../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $GET_LAST = "SELECT DATE_FORMAT(MEDATE,'%m/%d/%Y') AS MEDATE FROM CRITDATA LIMIT 1" ;
 $QUERY_D  = mysql_query($GET_LAST) or die(mysql_error()) ;
-$ME_Date = mysql_fetch_assoc($QUERY_D) ;
+$ME_Date = mysqli_fetch_assoc($QUERY_D) ;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/DVMBasicTemplate.dwt" codeOutsideHTMLIsLocked="false" -->

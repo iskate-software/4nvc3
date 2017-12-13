@@ -27,28 +27,28 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_CRITDATA = "SELECT * FROM CRITDATA LIMIT 1";
 $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-$row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+$row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
 
 
 $invdate=$_POST['invdate'];
 $invdate="SELECT STR_TO_DATE('$invdate','%m/%d/%Y')";
 $invdate=mysql_query($invdate, $tryconnection) or die(mysql_error());
-$invdate=mysql_fetch_array($invdate);
+$invdate=mysqli_fetch_array($invdate);
 
 $get_year = "SELECT YEAR('$invdate[0]')" ;
 $query_year = mysql_query($get_year, $tryconnection) or die(mysql_error()) ;
-$row_year = mysql_fetch_assoc($query_year) ;
+$row_year = mysqli_fetch_assoc($query_year) ;
 $year = $row_year[0] ;
 
 $cashdate=$_POST['cashdate'];
 $cashdate="SELECT STR_TO_DATE('$cashdate','%m/%d/%Y')";
 $cashdate=mysql_query($cashdate, $tryconnection) or die(mysql_error());
-$cashdate=mysql_fetch_array($cashdate);
+$cashdate=mysqli_fetch_array($cashdate);
 
 $balfwddate=$_POST['balfwddate'];
 $balfwddate="SELECT STR_TO_DATE('$balfwddate','%m/%d/%Y')";
 $balfwddate=mysql_query($balfwddate, $tryconnection) or die(mysql_error());
-$balfwddate=mysql_fetch_array($balfwddate);
+$balfwddate=mysqli_fetch_array($balfwddate);
 
 $stmtmonth=$_POST['stmtmonth'] ;
 $stmtyear = $year ;
@@ -119,7 +119,7 @@ if ($cashdate[0] > $invdate[0] || $invdate[0] < date('Y-m-d')) {
   
   $query_CLIENT = "SELECT CUSTNO, TITLE, COMPANY, CONTACT, ADDRESS1, ADDRESS2, CITY, STATE, ZIP, COUNTRY, CREDIT FROM TARCUST ORDER BY COMPANY ASC" ;
   $CLIENT = mysql_query($query_CLIENT, $tryconnection) or die(mysql_error()) ;
-  $row_CLIENT = mysql_fetch_assoc($CLIENT);
+  $row_CLIENT = mysqli_fetch_assoc($CLIENT);
 
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -184,13 +184,13 @@ display:block;
   // Check for cash
   $Is_Cash = "SELECT SUM(AMTPAID) AS AMTPAID FROM CASH WHERE CUSTNO = $row_CLIENT[CUSTNO]" ;
   $Q_Cash5 = mysql_query($Is_Cash, $tryconnection) or die(mysql_error()) ;
-  $row_CASH5 = mysql_fetch_assoc($Q_Cash5) ;
+  $row_CASH5 = mysqli_fetch_assoc($Q_Cash5) ;
   
 //get the balance forward
 
   $query_BALFWD = "SELECT SUM(IBAL) AS BALFWD FROM TARV WHERE INVDTE <= '$balfwddate[0]' AND CUSTNO = $row_CLIENT[CUSTNO]";
   $BALFWD = mysql_query($query_BALFWD, $tryconnection) or die(mysql_error());
-  $row_BALFWD = mysql_fetch_assoc($BALFWD);
+  $row_BALFWD = mysqli_fetch_assoc($BALFWD);
 //
   // Prepare the aging data
   // First, age all the receivables, figure the Balance Forward, then get the current for printing.
@@ -203,7 +203,7 @@ display:block;
   $Over_90 = 0 ;
   $Over_120 = 0 ;
   //  
-   while ($row1 = mysql_fetch_assoc($Q_Aged) ) {
+   while ($row1 = mysqli_fetch_assoc($Q_Aged) ) {
       $thisI = $row1['IBAL'] ;
       $TOTRECV = $TOTRECV + $thisI ;
       $AgeFactor =  $Curdate - (12 * $row1['INVYEAR'] + $row1['INVMONTH']) ;
@@ -232,7 +232,7 @@ display:block;
   // now the current.
   $RECEIVABLES = "SELECT INVNO, DATE_FORMAT(INVDTE, '%m/%d/%Y') AS INVDTE, YEAR(INVDTE) AS INVYEAR, MONTH(INVDTE) AS INVMONTH, PONUM, ITOTAL, AMTPAID, IBAL, TAX FROM TARV WHERE CUSTNO = '$row_CLIENT[CUSTNO]' AND INVDTE > '$balfwddate[0]' ORDER BY INVDTE,INVNO ";
   $Q_Recv = mysql_query($RECEIVABLES, $tryconnection) or die(mysql_error()) ;
-  $row1 = mysql_fetch_assoc($Q_Recv) ;
+  $row1 = mysqli_fetch_assoc($Q_Recv) ;
   
   $tax = 0 ;
   
@@ -348,7 +348,7 @@ display:block;
         </tr>
        <?php 
 	   		$tax = $tax + $row1['TAX']; 
-	   		} while ($row1 = mysql_fetch_assoc($Q_Recv)); ?>
+	   		} while ($row1 = mysqli_fetch_assoc($Q_Recv)); ?>
        
         <tr>
           <td>&nbsp;</td>
@@ -429,7 +429,7 @@ display:block;
   </table>
 
 </div>
-<?php } while ($row_CLIENT = mysql_fetch_assoc($CLIENT)); ?>
+<?php } while ($row_CLIENT = mysqli_fetch_assoc($CLIENT)); ?>
 </form>
 
 

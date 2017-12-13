@@ -16,8 +16,8 @@ $sortby = $_GET['sorting'];
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_INVENTORY = sprintf("SELECT * FROM ARINVT WHERE ITEM LIKE '%s' AND DESCRIP LIKE '%s' AND VPARTNO LIKE '%s' AND BARCODE LIKE '%s' ORDER BY ".$sortby." ASC", $item.'%', $description.'%', $vpartno.'%', $barcode.'%');
 $INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
-$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
-$totalRows_INVENTORY = mysql_num_rows($INVENTORY);
+$row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
+$totalRows_INVENTORY = mysqli_num_rows($INVENTORY);
 
 
 
@@ -103,7 +103,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
       <td height="10" align="left"><?php echo $row_INVENTORY['BARCODE']; ?></td>
     </tr>
     
-    <?php } while ($row_INVENTORY = mysql_fetch_assoc($INVENTORY)); ?>
+    <?php } while ($row_INVENTORY = mysqli_fetch_assoc($INVENTORY)); ?>
 </table>
 
 </form>
@@ -113,5 +113,5 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
 </body>
 <!-- InstanceEnd --></html>
 <?php
-mysql_free_result($INVENTORY);
+mysqli_free_result($INVENTORY);
 ?>

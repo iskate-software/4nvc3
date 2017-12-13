@@ -14,7 +14,7 @@ $stdum = $startdate ;
 mysql_select_db($database_tryconnection, $tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $query_startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($query_startdate);
+$startdate=mysqli_fetch_array($query_startdate);
 
 if (!empty($_GET['enddate'])){
 $enddate=$_GET['enddate'];
@@ -25,13 +25,13 @@ $enddate=date('Y/m/d');
 $enddum = $enddate ;
 $enddate1="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
 $query_enddate=mysql_query($enddate1, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($query_enddate);
+$enddate=mysqli_fetch_array($query_enddate);
 
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
 $gethosp="SELECT HOSPNAME FROM CRITDATA" ;
 $Query_hosp = mysql_query($gethosp, $tryconnection) or die(mysql_error()) ;
-$row_hosp = mysql_fetch_array($Query_hosp) ;
+$row_hosp = mysqli_fetch_array($Query_hosp) ;
 $hospname = $row_hosp['HOSPNAME'] ;
 
 $file2search=$_GET['file2search'];
@@ -52,7 +52,7 @@ $query_setup3 = mysql_query($populate_ARINVOI, $tryconnection) or die(mysql_erro
 $search_ARINVOI = "SELECT * FROM WILLYTRAVEL  GROUP BY INVDATETIME,COMPANY,CONTACT" ;
 
 $ARINVOI=mysql_query($search_ARINVOI, $tryconnection ) or die(mysql_error());
-$row_ARINVOI=mysql_fetch_assoc($ARINVOI);
+$row_ARINVOI=mysqli_fetch_assoc($ARINVOI);
 echo ' ended ' ;
 
 ?>
@@ -254,7 +254,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <td width="200" align="center" class="Verdana13">'.substr($row_ARINVOI['INVDESCR'],0,30).'</td>
   </tr>';
   }
-  while ($row_ARINVOI=mysql_fetch_assoc($ARINVOI));
+  while ($row_ARINVOI=mysqli_fetch_assoc($ARINVOI));
   
   ?>
   

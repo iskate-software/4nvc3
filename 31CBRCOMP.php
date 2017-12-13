@@ -13,7 +13,7 @@ $startdate='00/00/0000';
 mysql_select_db($database_tryconnection, $tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
 $enddate=$_GET['enddate'];
@@ -24,7 +24,7 @@ $enddate=date('m/d/Y');
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
 $enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_fetch_array($enddate);
 
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
@@ -63,17 +63,17 @@ $CASH6=mysql_query($search_ARCASH6, $tryconnection) or die(mysql_error());
 // now take out from the client file balances all the invoices which are beyond the selection date, and add the cash in to get the retroactive data.
 $select_CLIENT = "SELECT DISTINCT CUSTNO FROM INVOICES" ;
 $TAKEAWAY = mysql_query($select_CLIENT, $tryconnection) or die(mysql_error()) ;
-$row_CLIENT = mysql_fetch_assoc($TAKEAWAY) ;
+$row_CLIENT = mysqli_fetch_assoc($TAKEAWAY) ;
 $invcust = array() ;
 do {
 $invcust[] = $row_CLIENT['CUSTNO'] ;
-} while ($row_CLIENT=mysql_fetch_assoc($TAKEAWAY)) 
+} while ($row_CLIENT=mysqli_fetch_assoc($TAKEAWAY)) 
 foreach ($invcust as $invcust2 {
        $update_CUSTBAL = "UPDATE CUSTBAL SET BALANCE = BALANCE - $row_ARINVOI['ITOTAL'] WHERE CUSTNO = '$invcust2' ";
        $C_U = mysql_query($update_CUSTBAL, $tryconnection) or die(mysql_error()) ;
        }
 
-while ($row_CASH=mysql_fetch_assoc($CASH6)) {
+while ($row_CASH=mysqli_fetch_assoc($CASH6)) {
        $update_CUSTBAL = "UPDATE CUSTBAL SET BALANCE = BALANCE + $row_CASH['AMTPAID'] WHERE CUSTNO = $row_CASH['CUSTNO'] ";
        $C_U2 = mysql_query($update_CUSTBAL, $tryconnection) or die(mysql_error()) ;
        }
@@ -82,7 +82,7 @@ while ($row_CASH=mysql_fetch_assoc($CASH6)) {
 
 $CLIENT = "SELECT COMPANY,CONTACT,CAREA,PHONE,BALANCE,CREDIT FROM CUSTBAL WHERE BALANCE <> 0 OR CREDIT <> 0 ORDER BY COMPANY,CONTACT ASC" ;
 $get_CLIENT = mysql_query($CLIENT, $tryconnection) or die(mysql_error()) ;
-$row_CLIENT = mysql_fetch_assoc($get_CLIENT) ;
+$row_CLIENT = mysqli_fetch_assoc($get_CLIENT) ;
 
 
 ?>

@@ -6,19 +6,19 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
 $DOIT1 = mysql_query($LIMIT1, $tryconnection ) or die(mysql_error()) ;
-$FIRSTINV = mysql_fetch_array($DOIT1);
+$FIRSTINV = mysqli_fetch_array($DOIT1);
 
 $LIMIT2 = "SELECT LASTINV FROM PREFER LIMIT 1" ;
 $DOIT2 = mysql_query($LIMIT2, $tryconnection ) or die(mysql_error()) ;
-$LASTINV = mysql_fetch_array($DOIT2);
+$LASTINV = mysqli_fetch_array($DOIT2);
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
 $closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
-$closedate=mysql_fetch_array($closedate);
+$closedate=mysqli_fetch_array($closedate);
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
 $clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
-$clm1 = mysql_fetch_array($clm) ;
+$clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 
 /*
@@ -37,12 +37,12 @@ $PREP3 = mysql_query($SETUP3, $tryconnection) or die(mysql_error()) ;
 
 $FELINE = "SELECT INVMAJ,INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND  INVLGSM = 2 GROUP BY INVMAJ,INVORDDOC WITH ROLLUP" ;
 $FELPRT = mysql_query($FELINE, $tryconnection) or die(mysql_error()) ;
-$row_FELINE = mysql_fetch_assoc($FELPRT) ;
+$row_FELINE = mysqli_fetch_assoc($FELPRT) ;
 
 
 $CANDET = "SELECT INVMAJ,INVTNO,INVDESC, INVORDDOC, SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND INVLGSM = 2 GROUP BY INVMAJ,INVTNO,INVORDDOC WITH ROLLUP" ;
 $CANDETPRT = mysql_query($CANDET, $tryconnection) or die(mysql_error()) ;
-$row_CANDET = mysql_fetch_assoc($CANDETPRT) ;
+$row_CANDET = mysqli_fetch_assoc($CANDETPRT) ;
 
 // Finally, the total Revenue analysis which rolls up all of the above into a single report.
 // Average invoice per doctor is also calculated. The Doctor file is the source of the data,
@@ -52,7 +52,7 @@ $row_CANDET = mysql_fetch_assoc($CANDETPRT) ;
 
 $query_TOTREV = "SELECT INVMAJ, INVREVCAT, INVORDDOC, SUM(INVTOT) AS INVTOT FROM MSALES GROUP BY INVREVCAT, INVORDDOC WITH ROLLUP" ;
 $TOTREV = mysql_query($query_TOTREV, $tryconnection) or die(mysql_error()) ;
-$row_TOTREV = mysql_fetch_assoc($TOTREV) ;
+$row_TOTREV = mysqli_fetch_assoc($TOTREV) ;
 /*
  For this one, the interpretation of INVREVCAT comes from REVCAT, with the following additions:
  	90 = GST
@@ -66,7 +66,7 @@ $row_TOTREV = mysql_fetch_assoc($TOTREV) ;
 
   $query_CRITDATA = "SELECT HGST,HOGST,HGSTDATE,HTAXNAME,HOTAXNAME FROM CRITDATA LIMIT 1" ;
   $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-  $row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+  $row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
   $date2 = date("Y-m-d",time());
   if ($date2 >= $row_CRITDATA['HGSTDATE']) {
    $GSTNAME = $row_CRITDATA['HTAXNAME'] ;
@@ -143,7 +143,7 @@ Revenue Analysis (
     <td class="Verdana12B"><?php if ($row_FELINE['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='2' AND TCATGRY='".$row_FELINE['INVMAJ']."' LIMIT 1";
 	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
     <td <?php if (empty($row_FELINE['INVORDDOC'])) {echo "align='right' class='Verdana12B'";} else if (empty($row_FELINE['INVMAJ'])){
@@ -189,7 +189,7 @@ Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_FELINE['INVMAJ'];} while ($row_FELINE = mysql_fetch_assoc($FELPRT));  ?>
+   $xxx = $row_FELINE['INVMAJ'];} while ($row_FELINE = mysqli_fetch_assoc($FELPRT));  ?>
 
 
       </table>
@@ -242,7 +242,7 @@ Detailed Revenue Analysis (
     <td class="Verdana12B"><?php if ($row_CANDET['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE,TDESCR FROM VETCAN WHERE TSPECIES='2' AND TCATGRY='".$row_CANDET['INVMAJ']."' LIMIT 1";
 	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	$lookup = 0 ;
 	 if (strpos($row_TFF['TDESCR'] , 'Lookup') != 0 ) {
@@ -305,7 +305,7 @@ Detailed Revenue Analysis (
     <td></td>
   </tr>';
   } 
-   $xxx = $row_CANDET['INVMAJ'];} while ($row_CANDET = mysql_fetch_assoc($CANDETPRT));  ?>
+   $xxx = $row_CANDET['INVMAJ'];} while ($row_CANDET = mysqli_fetch_assoc($CANDETPRT));  ?>
 </table>
 </div>
      </td>

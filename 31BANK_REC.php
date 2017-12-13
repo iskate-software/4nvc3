@@ -13,7 +13,7 @@ $stdum = $startdate ;
 mysql_select_db($database_tryconnection, $tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
 $enddate=$_GET['enddate'];
@@ -24,12 +24,12 @@ $enddate=date('m/d/Y');
 $enddum = $enddate ;
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
 $enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_fetch_array($enddate);
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
 $gethosp="SELECT HOSPNAME FROM CRITDATA" ;
 $Query_hosp = mysql_query($gethosp, $tryconnection) or die(mysql_error()) ;
-$row_hosp = mysql_fetch_array($Query_hosp) ;
+$row_hosp = mysqli_fetch_array($Query_hosp) ;
 $hospname = $row_hosp['HOSPNAME'] ;
 
 $drop1 = "DROP TEMPORARY TABLE IF EXISTS DEBIT" ;
@@ -136,37 +136,37 @@ $exQ29 = mysql_query($Q29, $tryconnection) or die(mysql_error()) ;
 
 $Q30 = "SELECT SUM(DEBIT) AS DEBITTOT FROM ABANKREC" ;
 $exQ30 = mysql_query($Q30, $tryconnection) or die(mysql_error()) ;
-$row_debit = mysql_fetch_array($exQ30) ;
+$row_debit = mysqli_fetch_array($exQ30) ;
 $debittot = $row_debit['DEBITTOT'] ;
 
 $Q31 = "SELECT SUM(CASH) AS CASHTOT FROM ABANKREC" ;
 $exQ31 = mysql_query($Q31, $tryconnection) or die(mysql_error()) ;
-$row_cash = mysql_fetch_array($exQ31) ;
+$row_cash = mysqli_fetch_array($exQ31) ;
 $cashtot = $row_cash['CASHTOT'] ;
 
 $Q32 = "SELECT SUM(CHQ) AS CHQTOT FROM ABANKREC" ;
 $exQ32 = mysql_query($Q32, $tryconnection) or die(mysql_error()) ;
-$row_chq = mysql_fetch_array($exQ32) ;
+$row_chq = mysqli_fetch_array($exQ32) ;
 $chqtot = $row_chq['CHQTOT'] ;
 
 $Q33 = "SELECT SUM(VISA) AS VISATOT FROM ABANKREC" ;
 $exQ33 = mysql_query($Q33, $tryconnection) or die(mysql_error()) ;
-$row_visa = mysql_fetch_array($exQ33) ;
+$row_visa = mysqli_fetch_array($exQ33) ;
 $visatot = $row_visa['VISATOT'] ;
 
 $Q34 = "SELECT SUM(MC) AS MCTOT FROM ABANKREC" ;
 $exQ34 = mysql_query($Q34, $tryconnection) or die(mysql_error()) ;
-$row_mc = mysql_fetch_array($exQ34) ;
+$row_mc = mysqli_fetch_array($exQ34) ;
 $mctot = $row_mc['MCTOT'] ;
 
 $Q35 = "SELECT SUM(AMEX) AS AMEXTOT FROM ABANKREC" ;
 $exQ35 = mysql_query($Q35, $tryconnection) or die(mysql_error()) ;
-$row_amex = mysql_fetch_array($exQ35) ;
+$row_amex = mysqli_fetch_array($exQ35) ;
 $amextot = $row_amex['AMEXTOT'] ;
 
 $Q36 = "SELECT SUM(CELL) AS CELLTOT FROM ABANKREC" ;
 $exQ36 = mysql_query($Q36, $tryconnection) or die(mysql_error()) ;
-$row_cell = mysql_fetch_array($exQ36) ;
+$row_cell = mysqli_fetch_array($exQ36) ;
 $celltot = $row_cell['CELLTOT'] ;
 
 $grandtot = $debittot + $cashtot + $chqtot + $visatot + $mctot + $amextot + $celltot ;
@@ -206,7 +206,7 @@ $grandtot = $debittot + $cashtot + $chqtot + $visatot + $mctot + $amextot + $cel
     <td width="11%" align="right">Cell</td>
     <td width="12%" align="right">Total</td>
   </tr>
-  <?php while ($row_BANK = mysql_fetch_array($exQ29)) {
+  <?php while ($row_BANK = mysqli_fetch_array($exQ29)) {
   $thistot = $row_BANK['CASH'] + $row_BANK['CHQ'] + $row_BANK['DEBIT'] + $row_BANK['VISA'] + $row_BANK['MC'] + $row_BANK['AMEX'] + $row_BANK['CELL'] ;
   echo '<tr> 
     <td align="right">'.$row_BANK['DATEOF'].'</td>

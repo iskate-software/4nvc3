@@ -12,11 +12,11 @@ $query_INVENTORY = "SELECT ITEMID,ITEM,DESCRIP,DISPFEE, ONHAND, SEQ,CLASS,VPARTN
 $query_tot = "SELECT SUM(ONHAND/PKGQTY*COST) AS TOTAL FROM ARINVT " ;
 }
 $INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
-$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
+$row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 
 $grand_tot = mysql_query($query_tot, $tryconnection) or die(mysql_error()) ;
-$row_tot = mysql_fetch_assoc($grand_tot) ;
+$row_tot = mysqli_fetch_assoc($grand_tot) ;
 
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -256,7 +256,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <td class="Verdana12" align="right">'.$row_INVENTORY['UPRICE'].'</td>
     <td class="Verdana12" align="right">'.$row_INVENTORY['PRICE'].'</td>
   </tr>';
-	} while ($row_INVENTORY = mysql_fetch_assoc($INVENTORY));  
+	} while ($row_INVENTORY = mysqli_fetch_assoc($INVENTORY));  
   ?>
   
 </table>

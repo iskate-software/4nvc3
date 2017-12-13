@@ -13,7 +13,7 @@ $startdate='00/00/0000';
 mysql_select_db($database_tryconnection, $tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
 $enddate=$_GET['enddate'];
@@ -24,7 +24,7 @@ $enddate=date('m/d/Y');
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
 $enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_fetch_array($enddate);
 
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
@@ -36,13 +36,13 @@ $search_CREDIT = "SELECT SUM(CREDIT) AS Total_CREDIT FROM ARCUSTO ";
 $search_CURRENT = "SELECT SUM(IBAL) AS Total_CURRENT FROM ARARECV WHERE  INVDTE >= '$startdate[0]' AND INVDTE <= '$enddate[0]'";
 $search_PST = "SELECT SUM(PTAX) AS Total_PST FROM ARARECV WHERE  INVDTE >= '$startdate[0]' AND INVDTE <= '$enddate[0]'";
 $ARARECV=mysql_query($search_ARARECV, $tryconnection ) or die(mysql_error());
-$row_ARARECV=mysql_fetch_assoc($ARARECV);
+$row_ARARECV=mysqli_fetch_assoc($ARARECV);
 $CREDIT = mysql_query($search_CREDIT, $tryconnection ) or die(mysql_error()) ;
 $TAX = mysql_query($search_TAX, $tryconnection ) or die(mysql_error()) ;
 $PST = mysql_query($search_PST, $tryconnection ) or die(mysql_error()) ;
-$row_CREDIT = mysql_fetch_array($CREDIT) ;
-$row_TAX = mysql_fetch_array($TAX) ;
-$row_PST = mysql_fetch_array($PST) ;
+$row_CREDIT = mysqli_fetch_array($CREDIT) ;
+$row_TAX = mysqli_fetch_array($TAX) ;
+$row_PST = mysqli_fetch_array($PST) ;
 
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -252,7 +252,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <td width="40" align="right" class="Verdana12">'.$row_ARARECV['AMTPAID'].'</td>
   </tr>';
   }
-  while ($row_ARARECV=mysql_fetch_assoc($ARARECV);
+  while ($row_ARARECV=mysqli_fetch_assoc($ARARECV);
   
   ?>
   

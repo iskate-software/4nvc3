@@ -27,18 +27,18 @@ $endname ="Zz" ;
 
 $startdate1="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
-$startdate3=mysql_fetch_array($startdate2);
+$startdate3=mysqli_fetch_array($startdate2);
 
 $Round_about_midnight = "SELECT DATE_ADD('$startdate3[0]', INTERVAL '23:55' HOUR_MINUTE) AS LATER" ;
 $Bump_it = mysql_query($Round_about_midnight, $tryconnection) or die(mysql_error()) ;
-$Get_Bump = mysql_fetch_assoc($Bump_it) ;
+$Get_Bump = mysqli_fetch_assoc($Bump_it) ;
 $startdate3 = $Get_Bump['LATER'] ;
 
 echo $startdate3 ;
 
 $closemonth ="SELECT DATE_FORMAT('$startdate3', '%D %M %Y') " ;
 $clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
-$clm1 = mysql_fetch_array($clm) ;
+$clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
@@ -111,8 +111,8 @@ $CREDIT = "SELECT SUM(CREDIT) AS CREDIT FROM CUSTBAL  WHERE COMPANY >= TRIM('$st
 $NET = mysql_query($BALANCE, $tryconnection) or die(mysql_error()) ;
 $CREDIT1 = mysql_query($CREDIT, $tryconnection) or die(mysql_error()) ;
 
-$row_NET = mysql_fetch_assoc($NET) ;
-$row_CREDIT = mysql_fetch_assoc($CREDIT1) ;
+$row_NET = mysqli_fetch_assoc($NET) ;
+$row_CREDIT = mysqli_fetch_assoc($CREDIT1) ;
 
 // FINALLY, the alpha and numeric extract. 
 
@@ -298,7 +298,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <div id="irresults2">
       <table width="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#CCCCCC" frame="below" rules="rows">
         <?php 
-  while ($row_CLIENT=mysql_fetch_assoc($get_CLIENT)) {
+  while ($row_CLIENT=mysqli_fetch_assoc($get_CLIENT)) {
    
   echo ' 
  <tr>

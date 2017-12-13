@@ -17,7 +17,7 @@ $arinvtype='O';
 
 $query_SELECTEDITEM = sprintf("SELECT * FROM VETCAN WHERE TDESCR = '$ref' LIMIT 1");
 $SELECTEDITEM = mysql_query($query_SELECTEDITEM, $tryconnection) or die(mysql_error());
-$row_SELECTEDITEM = mysql_fetch_assoc($SELECTEDITEM);
+$row_SELECTEDITEM = mysqli_fetch_assoc($SELECTEDITEM);
 
 $taxname=taxname($database_tryconnection, $tryconnection, date("m/d/Y")); 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

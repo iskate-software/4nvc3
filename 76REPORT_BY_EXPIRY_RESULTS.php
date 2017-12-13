@@ -6,11 +6,11 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $enddate="SELECT STR_TO_DATE('$_GET[cutdate]','%m/%d/%Y')";
 $enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$cutoff=mysql_fetch_array($enddate);
+$cutoff=mysqli_fetch_array($enddate);
 
 $query_INVENTORY = "SELECT ITEM,DESCRIP,VPARTNO,SEQ,EXPDATE,ORDERPT,CLASS, DATE_FORMAT(EXPDATE, '%m/%d/%Y') AS DEAD FROM ARINVT WHERE  EXPDATE > '0000-00-00' AND EXPDATE < '$cutoff[0]' ORDER BY EXPDATE DESC, DESCRIP ";
 $INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
-$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
+$row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 
 
@@ -246,7 +246,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
   echo'</td>
     <td class="Verdana12">&nbsp;&nbsp;', $row_INVENTORY['DEAD'] ,'</td>
   </tr>';
-	} while ($row_INVENTORY = mysql_fetch_assoc($INVENTORY));  
+	} while ($row_INVENTORY = mysqli_fetch_assoc($INVENTORY));  
   ?>
   
 </table>

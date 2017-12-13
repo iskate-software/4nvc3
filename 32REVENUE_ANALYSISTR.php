@@ -8,19 +8,19 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
 $DOIT1 = mysql_query($LIMIT1, $tryconnection ) or die(mysql_error()) ;
-$FIRSTINV = mysql_fetch_array($DOIT1);
+$FIRSTINV = mysqli_fetch_array($DOIT1);
 
 $LIMIT2 = "SELECT LASTINV FROM PREFER LIMIT 1" ;
 $DOIT2 = mysql_query($LIMIT2, $tryconnection ) or die(mysql_error()) ;
-$LASTINV = mysql_fetch_array($DOIT2);
+$LASTINV = mysqli_fetch_array($DOIT2);
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
 $closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
-$closedate=mysql_fetch_array($closedate);
+$closedate=mysqli_fetch_array($closedate);
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
 $clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
-$clm1 = mysql_fetch_array($clm) ;
+$clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 // The total Revenue analysis which rolls up all of the species into a single report.
 
@@ -30,7 +30,7 @@ $query_TOTREV = "SELECT INVMAJ, INVREVCAT, INVORDDOC, SUM(INVTOT) AS INVTOT,PRIO
 //$query_TOTREV = "SELECT INVMAJ, INVREVCAT, INVORDDOC, SUM(INVTOT) AS INVTOT FROM MSALES GROUP BY INVREVCAT, INVORDDOC WITH ROLLUP" ;
 //$query_TOTREV = "SELECT INVMAJ, INVREVCAT, INVORDDOC, SUM(INVTOT) AS INVTOT FROM MSALES GROUP BY INVREVCAT, INVORDDOC" ;
 $TOTREV = mysql_query($query_TOTREV, $tryconnection) or die(mysql_error()) ;
-$row_TOTREV = mysql_fetch_assoc($TOTREV) ;
+$row_TOTREV = mysqli_fetch_assoc($TOTREV) ;
 /*
  For this one, the interpretation of INVREVCAT comes from REVCAT, with the following additions:
  	90 = GST
@@ -44,7 +44,7 @@ $row_TOTREV = mysql_fetch_assoc($TOTREV) ;
 
   $query_CRITDATA = "SELECT HGST,HOGST,HGSTDATE,HTAXNAME,HOTAXNAME FROM CRITDATA LIMIT 1" ;
   $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
-  $row_CRITDATA = mysql_fetch_assoc($CRITDATA);
+  $row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
   $date2 = date("Y-m-d",time());
   if ($date2 >= $row_CRITDATA['HGSTDATE']) {
    $GSTNAME = $row_CRITDATA['HTAXNAME'] ;
@@ -116,7 +116,7 @@ Total Revenue Analysis (
 	if ($row_TOTREV['INVREVCAT']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM REVCAT WHERE TCATGRY='".$row_TOTREV['INVREVCAT']."' LIMIT 1";
 	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
-	$row_TFF = mysql_fetch_assoc($TFF);
+	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} 
 	else if ($row_TOTREV['INVREVCAT']==90 && empty($row_TOTREV['INVORDDOC'])){
@@ -192,7 +192,7 @@ Total Revenue Analysis (
     <td></td>
   </tr>';
    
-   } $xxx = $row_TOTREV['INVREVCAT'];}  while ($row_TOTREV = mysql_fetch_assoc($TOTREV));  ?>
+   } $xxx = $row_TOTREV['INVREVCAT'];}  while ($row_TOTREV = mysqli_fetch_assoc($TOTREV));  ?>
 
 
 </table>

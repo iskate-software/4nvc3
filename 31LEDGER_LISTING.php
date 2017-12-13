@@ -60,11 +60,11 @@ $LEDG11P = mysql_query($LEDG11, $tryconnection) or die(mysql_error()) ;
 
 $HEADING = "SELECT COMPANY FROM LEDGER ORDER BY INVDTE DESC LIMIT 1" ;
 $query_head = mysql_query($HEADING, $tryconnection) or die(mysql_error()) ;
-$row_head = mysql_fetch_assoc($query_head) ;
+$row_head = mysqli_fetch_assoc($query_head) ;
 
 $query_LEDGLIST = "SELECT *, DATE_FORMAT(INVDTE, '%m/%d/%Y') AS INVDTE, DATE_FORMAT(DTEPAID, '%m/%d/%Y') AS DTEPAID, DATE_FORMAT(INVDTE, '%Y/%m/%d') AS DATESEQ FROM LEDGLIST ORDER BY DATESEQ ASC, LPAD(TRIM(INVNO),7,' '),  A1" ;
 $LEDGLIST = mysql_query($query_LEDGLIST, $tryconnection) or die(mysql_error()) ;
-$row_LEDGLIST = mysql_fetch_assoc($LEDGLIST);
+$row_LEDGLIST = mysqli_fetch_assoc($LEDGLIST);
 
 // now go through this file, building the balance forward into the IBAL field.
 $balfwd = 0.00 ;
@@ -375,7 +375,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
   
   $invdte = $row_LEDGLIST['INVDTE'];
   }
-  while ($row_LEDGLIST = mysql_fetch_assoc($LEDGLIST));
+  while ($row_LEDGLIST = mysqli_fetch_assoc($LEDGLIST));
   ?>
  
 </table>

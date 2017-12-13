@@ -6,9 +6,9 @@ $query_CLASSES = "SELECT CLASSID, CLASS, CONCAT(REGITM1,' ',REGOPR1,' ',REGITM2,
   REGITM1, REGOPR1, REGITM2, REGOPR2, REGITM3, ROUNDER1,MINPRICE1, CONCAT(REGITM4,' ',REGOPR4,' ',REGITM5,' ' ,REGOPR5, ' ',REGITM6) AS VIEWFORM4, 
   ROUNDER4, MINPRICE4,REGITM6,MEMO1,MEMO2 FROM FORMULA1 ORDER BY CLASS";
 $CLASSES = mysql_query($query_CLASSES, $tryconnection) or die(mysql_error());
-$row_CLASSES = mysql_fetch_assoc($CLASSES);
+$row_CLASSES = mysqli_fetch_assoc($CLASSES);
 //$totalRows_CLASSES = mysql_num_rows($CLASSES);
-$row_CLASSES = mysql_fetch_assoc($CLASSES);
+$row_CLASSES = mysqli_fetch_assoc($CLASSES);
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/POP UP WINDOWS TEMPLATE.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -135,7 +135,7 @@ self.close();
     <td align="center"><?php echo $row_CLASSES['MINPRICE4']; ?></td>
     <td align="left"><?php echo $row_CLASSES['MEMO2']; ?></td>
   </tr>
-    <?php } while ($row_CLASSES = mysql_fetch_assoc($CLASSES)); ?>
+    <?php } while ($row_CLASSES = mysqli_fetch_assoc($CLASSES)); ?>
 </table>
 </div>
 		</td>

@@ -6,7 +6,7 @@ require_once('../../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_CLASSES = "SELECT CLASSID, CLASS, REGITM3, VAR3, ROUNDER1, MINPRICE1, REGITM6, VAR6, ROUNDER4, MINPRICE4 FROM FORMULA1 ORDER BY CLASS";
 $CLASSES = mysql_query($query_CLASSES, $tryconnection) or die(mysql_error());
-$row_CLASSES = mysql_fetch_assoc($CLASSES);
+$row_CLASSES = mysqli_fetch_assoc($CLASSES);
 
 echo ' While I use up space which should not be needed Looking for check ';
   $_SESSION["class"] = "x" ;
@@ -138,7 +138,7 @@ function bodyonunload() {
     </td>
     <td align="center"><?php echo $row_CLASSES['MINPRICE4']; ?></td>
   </tr>
-    <?php } while ($row_CLASSES = mysql_fetch_assoc($CLASSES)); ?>
+    <?php } while ($row_CLASSES = mysqli_fetch_assoc($CLASSES)); ?>
 </table>
 </div>
 		</td>

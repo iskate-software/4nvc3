@@ -10,7 +10,7 @@ $reqsupplier = $_SESSION['supplier'] ;
 
 $query_INVENTORY = "SELECT * FROM ARINVT WHERE SUPPLIER = '$reqsupplier' ORDER BY VPARTNO"; 
 $INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
-$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
+$row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 
 
@@ -245,7 +245,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <td class="Verdana12" align="right">'.$row_INVENTORY['UPRICE'].'</td>
     <td class="Verdana12" align="right">'.$row_INVENTORY['PRICE'].'</td>
   </tr>';
-	} while ($row_INVENTORY = mysql_fetch_assoc($INVENTORY));  
+	} while ($row_INVENTORY = mysqli_fetch_assoc($INVENTORY));  
   ?>
   
 </table>

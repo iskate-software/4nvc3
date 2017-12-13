@@ -7,7 +7,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $get_supplier = "SELECT DISTINCT SUPPLIER FROM ARINVT ORDER BY TRIM(SUPPLIER) ASC" ;
 $query_supplier = mysql_query($get_supplier, $tryconnection) or die(mysql_error()) ;
-$row_supplier = mysql_fetch_assoc($query_supplier) ;
+$row_supplier = mysqli_fetch_assoc($query_supplier) ;
 
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -187,7 +187,7 @@ document.supplier_search.supplier.focus();
     <td height="30" align="center" class="Verdana12" colspan="2">
       <label>Supplier:
       <select name="supplier" id="supplier" >
-      <?php while ($row_supplier = mysql_fetch_assoc($query_supplier) ) {
+      <?php while ($row_supplier = mysqli_fetch_assoc($query_supplier) ) {
       echo ' <option value="'.$row_supplier['SUPPLIER'].'">'.$row_supplier['SUPPLIER'].'</option>' ;
       } ?></select></label> </td>
     </tr>

@@ -6,7 +6,7 @@ require_once('../../tryconnection.php');
 mysql_select_db($database_tryconnection, $tryconnection);
 $query_CLASSES = "SELECT CLASSID, CLASS, REGITM3, VAR3, ROUNDER1, MINPRICE1, REGITM6, VAR6, ROUNDER4, MINPRICE4 FROM FORMULA1 ORDER BY CLASS";
 $CLASSES = mysql_query($query_CLASSES, $tryconnection) or die(mysql_error());
-$row_CLASSES = mysql_fetch_assoc($CLASSES);
+$row_CLASSES = mysqli_fetch_assoc($CLASSES);
 
 echo ' While I use up space which should not be needed Looking for check ';
   $_SESSION["class"] = "x" ;
@@ -27,7 +27,7 @@ function invtround($x,$y)
   $CLASSX = "SELECT REGITM3,REGITM6,ROUNDER1,MINPRICE1,ROUNDER4,MINPRICE4 FROM FORMULA1 WHERE CLASS = '$class' LIMIT 1" ;
 
   $get_CLASS = mysql_query($CLASSX, $tryconnection) or die(mysql_error()) ;
-  $row_CLASS = mysql_fetch_assoc($get_CLASS) ;
+  $row_CLASS = mysqli_fetch_assoc($get_CLASS) ;
  
   $count = 0 ;
    $meddle = 0 ;
@@ -36,7 +36,7 @@ function invtround($x,$y)
   $get_AFFECTED = mysql_query($AFFECTED, $tryconnection) or die(mysql_error()) ;
   
   
-  while ($row_AFFECTED = mysql_fetch_assoc($get_AFFECTED)) {
+  while ($row_AFFECTED = mysqli_fetch_assoc($get_AFFECTED)) {
    if ($row_AFFECTED['MANUAL'] != 1 && $row_AFFECTED['MARKUP'] == 1 ) {
    
       $price = $row_AFFECTED['PRICE'] ;
@@ -211,7 +211,7 @@ function bodyonunload() {
     </td>
     <td align="center"><?php echo $row_CLASSES['MINPRICE4']; ?></td>
   </tr>
-    <?php } while ($row_CLASSES = mysql_fetch_assoc($CLASSES)); ?>
+    <?php } while ($row_CLASSES = mysqli_fetch_assoc($CLASSES)); ?>
 </table>
 </div>
 		</td>

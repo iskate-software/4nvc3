@@ -12,7 +12,7 @@ $stdum = $startdate ;
 mysql_select_db($database_tryconnection, $tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
 $enddate=$_GET['enddate'];
@@ -23,7 +23,7 @@ $enddate=date('m/d/Y');
 $enddum = $enddate ;
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
 $enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_fetch_array($enddate);
 
 $file2search=$_GET['file2search'];
 
@@ -38,7 +38,7 @@ if ($file2search=="All")  {
 
 $search_NARCPUR="SELECT ITEM,DESCRIP,SUM(QTY) AS QTY,SUM(QTYREM) AS QTYREM,DATEPURCH,LASTDATE,VENDOR,COMMENT FROM NARCPUR WHERE ((LASTDATE >= '$startdate[0]' AND LASTDATE <= '$enddate[0]') OR (DATEPURCH >= '$startdate[0]' AND DATEPURCH <= '$enddate[0]'))  $qtysrch GROUP BY ITEM,DATEPURCH WITH ROLLUP" ;
 $NARCPUR=mysql_query($search_NARCPUR, $tryconnection ) or die(mysql_error());
-$row_NARCPUR=mysql_fetch_assoc($NARCPUR);
+$row_NARCPUR=mysqli_fetch_assoc($NARCPUR);
 }
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -223,7 +223,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <table width="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#CCCCCC" frame="below" rules="rows">
   <?php 
   $x = 0 ;
-  while ($row_NARCPUR=mysql_fetch_assoc($NARCPUR)) {
+  while ($row_NARCPUR=mysqli_fetch_assoc($NARCPUR)) {
   echo '
   <tr id="'.$row_NARCPUR['ITEM'].$row_NARCPUR['DATEPURCH'].'" onmouseover="highliteline(this.id,\'#DCF6DD\'); CursorToPointer(this.id);" onmouseout="whiteoutline(this.id)" onclick="window.open(\'../../IMAGES/CUSTOM_DOCUMENTS/INVOICE_PREVIEW2.php?file2search='.$_GET['file2search'].'&invdte='.$row_ARINVOI['INVDTE'].'&invno='.$row_ARINVOI['INVNO'].'\',\'_blank\')">
     <td width="80" align="left" class="Verdana13BBlue">'; if ($row_NARCPUR['DATEPURCH'] !== null || $x == 0){echo $row_NARCPUR['ITEM'];} else {echo '      ';} echo '&nbsp;</td>

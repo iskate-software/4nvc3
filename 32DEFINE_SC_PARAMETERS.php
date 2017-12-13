@@ -7,7 +7,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $DAY = "SELECT DAY(NOW()) AS DAY" ;
 $GET_day = mysql_query($DAY, $tryconnection) or die(mysql_error());
-$row_day = mysql_fetch_assoc($GET_day) ;
+$row_day = mysqli_fetch_assoc($GET_day) ;
  if ($row_day['DAY'] > 27) {
  $Base_date= "SELECT DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 MONTH),'%m/%d/%Y') AS CUTOFF" ;
  $Get_invdte= "SELECT DATE_FORMAT(NOW(),'%m/%d/%Y') AS INVDATE" ;
@@ -17,16 +17,16 @@ $row_day = mysql_fetch_assoc($GET_day) ;
  }
  
 $FETCH_it = mysql_query($Base_date, $tryconnection) or die(mysql_error()) ;
-$row_FETCH = mysql_fetch_assoc($FETCH_it) ;
+$row_FETCH = mysqli_fetch_assoc($FETCH_it) ;
 $scdate = $row_FETCH['CUTOFF'] ;
 
 $FETCH1_it = mysql_query($Get_invdte, $tryconnection) or die(mysql_error()) ;
-$row_FETCH1 = mysql_fetch_assoc($FETCH1_it) ;
+$row_FETCH1 = mysqli_fetch_assoc($FETCH1_it) ;
 $invdate = $row_FETCH1['INVDATE'] ;
 
 $GET_PCT = "SELECT SVPCT,MINSVCHG,BALOWI FROM CRITDATA LIMIT 1" ;
 $PARAMETERS = mysql_query($GET_PCT, $tryconnection) or die(mysql_error()) ;
-$row_CRITDATA = mysql_fetch_assoc($PARAMETERS) ;
+$row_CRITDATA = mysqli_fetch_assoc($PARAMETERS) ;
 $svpct = $row_CRITDATA['SVPCT'] ;
 $minsvchg = $row_CRITDATA['MINSVCHG'] ;
 $minbal = $row_CRITDATA['BALOWI'] ;

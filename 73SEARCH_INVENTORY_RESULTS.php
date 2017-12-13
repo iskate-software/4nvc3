@@ -14,7 +14,7 @@ $stdum = $startdate ;
 mysql_select_db($database_tryconnection, $tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
 $startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
-$startdate=mysql_fetch_array($startdate);
+$startdate=mysqli_fetch_array($startdate);
 
 echo ' start ' . $startdate[0] ;
 // In spite of the name, the following is the search argument in the invoice line item
@@ -29,13 +29,13 @@ $enddate=date('m/d/Y');
 $enddum = $enddate ;
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
 $enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
-$enddate=mysql_fetch_array($enddate);
+$enddate=mysqli_fetch_array($enddate);
 echo ' end ' . $enddate[0] . ' ' ;
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
 $gethosp="SELECT HOSPNAME FROM CRITDATA" ;
 $Query_hosp = mysql_query($gethosp, $tryconnection) or die(mysql_error()) ;
-$row_hosp = mysql_fetch_array($Query_hosp) ;
+$row_hosp = mysqli_fetch_array($Query_hosp) ;
 $hospname = $row_hosp['HOSPNAME'] ;
 
 $search_SETUP0 = "DROP TEMPORARY TABLE IF EXISTS SEARCHINV ;" ;
@@ -51,8 +51,8 @@ $Query_2 = mysql_query($search_SETUP2, $tryconnection) or die(mysql_error()) ;
 $Query_3 = mysql_query($search_SETUP3, $tryconnection) or die(mysql_error()) ;
 $ARINVOI=mysql_query($search_ARINVOI, $tryconnection ) or die(mysql_error()) ;
 $Query_TOT = mysql_query($search_TOTAL, $tryconnection)or die(mysql_error()) ;
-$row_ARINVOI=mysql_fetch_assoc($ARINVOI);
-$row_NET = mysql_fetch_assoc($Query_TOT) ;
+$row_ARINVOI=mysqli_fetch_assoc($ARINVOI);
+$row_NET = mysqli_fetch_assoc($Query_TOT) ;
 
 
 ?>
@@ -249,7 +249,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     <td width="92" align="right" class="Verdana13">'.$row_ARINVOI['INVTOT'].'</td>
   </tr>';
   }
-  while ($row_ARINVOI=mysql_fetch_assoc($ARINVOI));
+  while ($row_ARINVOI=mysqli_fetch_assoc($ARINVOI));
   
   ?>
   

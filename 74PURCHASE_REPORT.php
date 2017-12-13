@@ -16,7 +16,7 @@ $stdum = $startdate ;
 mysql_select_db($database_tryconnection, $tryconnection);
 $startdate1="SELECT STR_TO_DATE('$startdate','%m/%d/%Y') AS STARTDATE";
 $startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
-$startdate3=mysql_fetch_array($startdate2);
+$startdate3=mysqli_fetch_array($startdate2);
 $startdate = $startdate3['STARTDATE'] ;
 // echo ' Starting ' . $startdate ;
 if (!empty($_GET['enddate'])){
@@ -29,7 +29,7 @@ $enddum = $enddate ;
 //echo ' Ending ' . $enddum ;
 $enddate1="SELECT STR_TO_DATE('$enddate','%m/%d/%Y') AS ENDDATE";
 $enddate2=mysql_query($enddate1, $tryconnection) or die(mysql_error());
-$enddate3=mysql_fetch_array($enddate2);
+$enddate3=mysqli_fetch_array($enddate2);
 $enddate = $enddate3['ENDDATE'] ;
 
 // and figure the number of days between them.
@@ -230,7 +230,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
     
   </tr>';
   }
-  while ($row_DRUG=mysql_fetch_assoc($GET_DRUGS));
+  while ($row_DRUG=mysqli_fetch_assoc($GET_DRUGS));
   
   ?>
   

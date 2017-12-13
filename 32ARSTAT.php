@@ -83,12 +83,12 @@ if ($cashdate[0] > $invdate[0] || $invdate[0] < date('Y-m-d')) {
 $CLIENTS = "SELECT  CUSTNO,TITLE,COMPANY,CONTACT,ADDRESS1,
              ADDRESS2, STATE, ZIP, COUNTRY, CREDIT FROM TARCUST" ;
 $Q_Client = mysql_query($CLIENTS, $tryconnection( or die(mysql_error()) ;
-while($row = mysql_fetch_assoc($Q_Client)) {
+while($row = mysqli_fetch_assoc($Q_Client)) {
   // Check for cash
   $pay2date = 0 ;
   $Is_Cash = "SELECT SUM(AMTPAID) FROM CASH WHERE CUSTNO = $row['CUSTNO']" ;
   $Q_Cash5 = mysql_query($Is_Cash, $tryconnection) or die(mysql_error()) ;
-  $any = mysql_fetch_array($Q_Cash,MYSQL_NUM) ;
+  $any = mysqli_fetch_array($Q_Cash,MYSQLI_NUM) ;
   if ($any) {
     $pay2date = $any ;
   }
@@ -109,7 +109,7 @@ while($row = mysql_fetch_assoc($Q_Client)) {
   // Cash paid this month if any
 //   use $pay2date if not zero.......  
   // and the detailed invoice amounts. Do the aging as you go.
-  while($row1 = mysql_fetch_assoc($Q_Recv) {
+  while($row1 = mysqli_fetch_assoc($Q_Recv) {
   if $Curdate - (YEAR($row1['invdte']) + 12*MONTH($row1['invdte']) ) = 0 ) {
     $Current = $Current + $row1['ibal'] ;
     $GCurrent = $GCurrent + $row1['ibal'] ;

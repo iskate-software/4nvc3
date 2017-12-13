@@ -17,7 +17,7 @@ $stdum = $startdate ;
 mysql_select_db($database_tryconnection, $tryconnection);
 $startdate1="SELECT STR_TO_DATE('$startdate','%m/%d/%Y') AS STARTDATE";
 $startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
-$startdate3=mysql_fetch_array($startdate2);
+$startdate3=mysqli_fetch_array($startdate2);
 $startdate = $startdate3['STARTDATE'] ;
 
 if (!empty($_GET['enddate'])){
@@ -30,7 +30,7 @@ $enddum = $enddate ;
 
 $enddate1="SELECT STR_TO_DATE('$enddate','%m/%d/%Y') AS ENDDATE";
 $enddate2=mysql_query($enddate1, $tryconnection) or die(mysql_error());
-$enddate3=mysql_fetch_array($enddate2);
+$enddate3=mysqli_fetch_array($enddate2);
 $enddate = $enddate3['ENDDATE'] ;
 
 // and figure the number of days between them.
@@ -48,7 +48,7 @@ $QStep2 = mysql_query($Step_2, $tryconnection) or die(mysql_error()) ;
 // Identify the relevant drugs.
 $prep0 = "SELECT COUNT(DISTINCT(ITEM)) AS NUMITEM FROM NARCPUR WHERE ACTIVE <> 9" ;
 $Q_prep0 = mysql_query($prep0, $tryconnection) or die(mysql_error()) ;
-$row_prep0 = mysql_fetch_assoc($Q_prep0) ;
+$row_prep0 = mysqli_fetch_assoc($Q_prep0) ;
 $num_drugs = $row_prep0['NUMITEM'];
 // echo ' No of drugs = ' . $num_drugs ;
 $block_num = intval($num_drugs / 3) ;
@@ -64,18 +64,18 @@ $item = 1 ;
 $block_units = $num_days * 3 ; // The number of cells to fill out the week.
 $cell_count = 0 ; // To track the number of cells done so far.
 
-while ($row_drug = mysql_fetch_assoc($Query_Select)) {
+while ($row_drug = mysqli_fetch_assoc($Query_Select)) {
 
  $drug = $row_drug['ITEM'] ; 
  $Open_bal = "SELECT SUM(QTYREM)  AS OPENING FROM NARCPUR WHERE ITEM = '$drug' AND DATEPURCH < '$startdate'";
  $Query_open = mysql_query($Open_bal, $tryconnection) or die(mysql_error()) ;
- $row_bal = mysql_fetch_assoc($Query_open) ;
+ $row_bal = mysqli_fetch_assoc($Query_open) ;
  $open = $row_bal['OPENING'] ;
  
  // Then add back in everything which has been taken out after the last date..
  $put_back = "SELECT SUM(DRAWN) AS RETURNED FROM NARCLOG WHERE ITEM = '$drug' AND INVDTE >='$startdate'  AND INVDTE <= '$enddate'" ;
  $Q_putback = mysql_query($put_back, $tryconnection) or die(mysql_error()) ;
- $row_balPB = mysql_fetch_assoc($Q_putback) ;
+ $row_balPB = mysqli_fetch_assoc($Q_putback) ;
  $return = $row_balPB['RETURNED'] ;
  $open = $open + $return ;
  
@@ -90,7 +90,7 @@ unset($purch) ;
 unset($date_purch) ;
 $purch = array() ;
 $date_purch = array() ;
-while ($row_Qship = mysql_fetch_assoc($Qship)) {
+while ($row_Qship = mysqli_fetch_assoc($Qship)) {
   $drug1 = $row_Qship['ITEM']  ; 
   $purch[] = $row_Qship['QTY']  ;
   $date_purch[] = $row_Qship['DATEPURCH'] ;
@@ -107,7 +107,7 @@ while ($row_Qship = mysql_fetch_assoc($Qship)) {
   $use = "SELECT INVDTE, DRAWN, PETID FROM NARCLOG WHERE ITEM = '$drug' AND INVDTE >= '$startdate' AND INVDTE <= '$enddate' ORDER BY INVDTE" ;
   $Quse = mysql_query($use, $tryconnection) or die(mysql_error()) ;
   
-  while ($row_Qdrawn = mysql_fetch_assoc($Quse)) {
+  while ($row_Qdrawn = mysqli_fetch_assoc($Quse)) {
    $drawn[] = $row_Qdrawn['DRAWN'] ;
    $date_drawn[] = $row_Qdrawn['INVDTE'] ;
    $used_on[] = $row_Qdrawn['PETID'] ;
@@ -210,7 +210,7 @@ $col2 = 'a' ;
 $col3 = 'a' ;
 
 $break = 0 ;
-while ($row_Qbal = mysql_fetch_assoc($Q_balance)) {
+while ($row_Qbal = mysqli_fetch_assoc($Q_balance)) {
 // fill out the arrays, padding appropriate columns in the last block with blanks if the total 
 // number of drugs is not exactly divisible by 3
   if ($items == 0){

@@ -7,7 +7,7 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_INVENTORY = "SELECT ITEM,DESCRIP,VPARTNO,SEQ,MEMO,ORDERPT,CLASS FROM ARINVT WHERE SPECORDER = 1 ORDER BY ITEM ";
 $INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
-$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
+$row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 
 
@@ -241,7 +241,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
   echo'</td>
     <td class="Verdana12">&nbsp;&nbsp;', $row_INVENTORY['MEMO'] ,'</td>
   </tr>';
-	} while ($row_INVENTORY = mysql_fetch_assoc($INVENTORY));  
+	} while ($row_INVENTORY = mysqli_fetch_assoc($INVENTORY));  
   ?>
   
 </table>

@@ -9,7 +9,7 @@ $query_CLASSES = "SELECT CLASSID, CLASS, CONCAT(REGITM1,' ',REGOPR1,' ',REGITM2,
   REGITM1, REGOPR1, REGITM2, REGOPR2, REGITM3, ROUNDER1,MINPRICE1, CONCAT(REGITM4,' ',REGOPR4,' ',REGITM5,' ' ,REGOPR5, ' ',REGITM6) AS VIEWFORM4, 
   ROUNDER4, MINPRICE4,REGITM6, MEMO1, MEMO2 FROM FORMULA1 WHERE CLASSID = $classid LIMIT 1";
 $CLASSES = mysql_query($query_CLASSES, $tryconnection) or die(mysql_error());
-$row_CLASSES = mysql_fetch_assoc($CLASSES);
+$row_CLASSES = mysqli_fetch_assoc($CLASSES);
 
 
 if (isset($_POST['save']) && $classid=='0'){

@@ -10,19 +10,19 @@ mysql_select_db($database_tryconnection, $tryconnection);
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
 $closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
-$closedate=mysql_fetch_array($closedate);
+$closedate=mysqli_fetch_array($closedate);
 
 // now do funny things with this, to cope with the fact that most transactions have hour,min,sec of 00:00:00,
 // but those that do not, get cut out of the <= comparison. So add 23 hours and 55 mins to the base date.
 
 $Round_about_midnight = "SELECT DATE_ADD('$closedate[0]', INTERVAL '23:55' HOUR_MINUTE) AS LATER" ;
 $Bump_it = mysql_query($Round_about_midnight, $tryconnection) or die(mysql_error()) ;
-$Get_Bump = mysql_fetch_assoc($Bump_it) ;
+$Get_Bump = mysqli_fetch_assoc($Bump_it) ;
 $closedate[0] = $Get_Bump['LATER'] ;
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
 $clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
-$clm1 = mysql_fetch_array($clm) ;
+$clm1 = mysqli_fetch_array($clm) ;
 
 $clm2 = $clm1[0] ;
 
@@ -46,11 +46,11 @@ $DOIT6 = mysql_query($SETUP6, $tryconnection) or die(mysql_error()) ;
 
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
 $DOIT1 = mysql_query($LIMIT1, $tryconnection ) or die(mysql_error()) ;
-$FIRSTINV = mysql_fetch_array($DOIT1);
+$FIRSTINV = mysqli_fetch_array($DOIT1);
 
 $LIMIT2 = "SELECT LASTINV FROM PREFER LIMIT 1" ;
 $DOIT2 = mysql_query($LIMIT2, $tryconnection ) or die(mysql_error()) ;
-$LASTINV = mysql_fetch_array($DOIT2);
+$LASTINV = mysqli_fetch_array($DOIT2);
 
 $SETUP1 = "DROP  TABLE IF EXISTS ARTEMPI" ;
 $SETUP2 = "CREATE TABLE ARTEMPI LIKE ARINVOI" ;
@@ -96,7 +96,7 @@ $DOCAVG5 = mysql_query($DOCTAB15, $tryconnection) or die(mysql_error()) ;
 
 // do the species totals
  echo ' now filling it up ' ;
-while ($row_T = mysql_fetch_assoc($DOCAVG4)) {
+while ($row_T = mysqli_fetch_assoc($DOCAVG4)) {
  $tot = $row_T['INVTOT'] ;
  $doc = $row_T['INVORDDOC'] ;
  $lgsm = $row_T['INVLGSM'] ;
@@ -139,7 +139,7 @@ while ($row_T = mysql_fetch_assoc($DOCAVG4)) {
  
 // The invoice totals
 
-while ($row_S = mysql_fetch_assoc($DOCAVG4A)) {
+while ($row_S = mysqli_fetch_assoc($DOCAVG4A)) {
  $inv = $row_S['INVTOT'] ;
  $doc = $row_S['INVORDDOC'] ;
 
@@ -148,7 +148,7 @@ while ($row_S = mysql_fetch_assoc($DOCAVG4A)) {
  
 }
 
-while ($row_T = mysql_fetch_assoc($DOCAVG5)) {
+while ($row_T = mysqli_fetch_assoc($DOCAVG5)) {
  $inv = $row_T['INVNO'] ;
  $doc = $row_T['INVORDDOC'] ;
  $DOCTAB18 = "UPDATE DOCTAB1 SET INVOICES = '$inv' WHERE DOCTOR = '$doc' LIMIT 1" ;
