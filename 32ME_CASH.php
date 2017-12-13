@@ -2,15 +2,15 @@
 session_start();
 require_once('../../tryconnection.php'); 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
-$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
+$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysqli_error($mysqli_link));
 $closedate=mysqli_fetch_array($closedate);
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
-$clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
+$clm = mysqli_query($tryconnection, $closemonth) or die(mysqli_error($mysqli_link)) ;
 $clm1 = mysqli_fetch_array($clm) ;
 
 $clm2 = $clm1[0] ;
@@ -31,51 +31,51 @@ $DOIT6 = mysql_query($SETUP6, $tryconnection) or die(mysql_error()) ;
 */
 
 $search_CASH = "SELECT SUM(AMTPAID) AS Total_Cash FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'CASH') <> 0 ";
-$CASH = mysql_query($search_CASH, $tryconnection ) or die(mysql_error()) ;
+$CASH = mysqli_query($tryconnection, $search_CASH) or die(mysqli_error($mysqli_link)) ;
 $row_CASH=mysqli_fetch_array($CASH);
 
 $search_CHQ = "SELECT SUM(AMTPAID) AS Total_CHQ FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'CHEQUE') <> 0 OR INSTR(UPPER(REFNO),'CHQ') <> 0 ";
-$CHQ = mysql_query($search_CHQ, $tryconnection ) or die(mysql_error()) ;
+$CHQ = mysqli_query($tryconnection, $search_CHQ) or die(mysqli_error($mysqli_link)) ;
 $row_CHQ=mysqli_fetch_array($CHQ);
 
 $search_VISA = "SELECT SUM(AMTPAID) AS Total_VISA FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'VISA') <> 0 ";
-$VISA = mysql_query($search_VISA, $tryconnection ) or die(mysql_error()) ;
+$VISA = mysqli_query($tryconnection, $search_VISA) or die(mysqli_error($mysqli_link)) ;
 $row_VISA=mysqli_fetch_array($VISA);
 
 $search_MCRD = "SELECT SUM(AMTPAID) AS Total_MCRD FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'MC') <> 0 OR INSTR(UPPER(REFNO),'M/C') <> 0  ";
-$MCRD = mysql_query($search_MCRD, $tryconnection ) or die(mysql_error()) ;
+$MCRD = mysqli_query($tryconnection, $search_MCRD) or die(mysqli_error($mysqli_link)) ;
 $row_MCRD=mysqli_fetch_array($MCRD);
 
 $search_AMEX = "SELECT SUM(AMTPAID) AS Total_AMEX FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'AMEX') <> 0 ";
-$AMEX = mysql_query($search_AMEX, $tryconnection ) or die(mysql_error()) ;
+$AMEX = mysqli_query($tryconnection, $search_AMEX) or die(mysqli_error($mysqli_link)) ;
 $row_AMEX=mysqli_fetch_array($AMEX);
 
 $search_DCRD = "SELECT SUM(AMTPAID) AS Total_DCRD FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'DCRD') <> 0 ";
-$DCRD = mysql_query($search_DCRD, $tryconnection ) or die(mysql_error()) ;
+$DCRD = mysqli_query($tryconnection, $search_DCRD) or die(mysqli_error($mysqli_link)) ;
 $row_DCRD=mysqli_fetch_array($DCRD);
 
 $search_DINE = "SELECT SUM(AMTPAID) AS Total_DINE FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'DINE') <> 0 ";
-$DINE = mysql_query($search_DINE, $tryconnection ) or die(mysql_error()) ;
+$DINE = mysqli_query($tryconnection, $search_DINE) or die(mysqli_error($mysqli_link)) ;
 $row_DINE=mysqli_fetch_array($DINE);
 
 $search_GE = "SELECT SUM(AMTPAID) AS Total_GE FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'GE') <> 0 ";
-$GE = mysql_query($search_GE, $tryconnection ) or die(mysql_error()) ;
+$GE = mysqli_query($tryconnection, $search_GE) or die(mysqli_error($mysqli_link)) ;
 $row_GE=mysqli_fetch_array($GE);
 
 $search_CELL = "SELECT SUM(AMTPAID) AS Total_CELL FROM ARTEMPC WHERE INSTR(UPPER(REFNO),'CELL') <> 0 ";
-$CELL = mysql_query($search_CELL, $tryconnection ) or die(mysql_error()) ;
+$CELL = mysqli_query($tryconnection, $search_CELL) or die(mysqli_error($mysqli_link)) ;
 $row_CELL=mysqli_fetch_array($CELL);
 
 $search_PND = "SELECT SUM(AMTPAID) AS Total_PND FROM ARTEMPC WHERE UPPER(REFNO) = 'PND' OR UPPER(REFNO) = 'POUND' ";
-$PND = mysql_query($search_PND, $tryconnection ) or die(mysql_error()) ;
+$PND = mysqli_query($tryconnection, $search_PND) or die(mysqli_error($mysqli_link)) ;
 $row_PND=mysqli_fetch_array($PND);
 
 
 $M_cash1 = "UPDATE ARTEMPC SET COMPANY = 'Totals this date'" ;
-$Doit7 = mysql_query($M_cash1, $tryconnection) or die(mysql_error()) ;
+$Doit7 = mysqli_query($tryconnection, $M_cash1) or die(mysqli_error($mysqli_link)) ;
 
 $M_cash2 = "SELECT COMPANY, SUM(AMTPAID) AS MTCASHSL FROM ARTEMPC WHERE REFNO <> 'Corrn.' ";
-$Doit8 = mysql_query($M_cash2, $tryconnection) or die(mysql_error()) ;
+$Doit8 = mysqli_query($tryconnection, $M_cash2) or die(mysqli_error($mysqli_link)) ;
 $MTCASHSL = mysqli_fetch_array($Doit8);
 
 $M_cash3 = "ALTER TABLE ARTEMPC ADD INDEX CDAYOF (DTEPAID)" ;
@@ -83,7 +83,7 @@ $M_cash3 = "ALTER TABLE ARTEMPC ADD INDEX CDAYOF (DTEPAID)" ;
 
 
 $Sum_CASHMONTH = "SELECT DATE_FORMAT(DTEPAID, '%m/%d/%Y') AS DTEPAID, COMPANY, SUM(AMTPAID) AS AMTPAID FROM ARTEMPC  WHERE REFNO <> 'Corrn.' GROUP BY DTEPAID ";
-$Get_CASHMONTH = mysql_query($Sum_CASHMONTH, $tryconnection) or die(mysql_error()) ;
+$Get_CASHMONTH = mysqli_query($tryconnection, $Sum_CASHMONTH) or die(mysqli_error($mysqli_link)) ;
 $row_CASHMONTH = mysqli_fetch_array($Get_CASHMONTH);
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

@@ -11,9 +11,9 @@ else {
 $startdate='00/00/0000';
 }
 $stdum = $startdate ;
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$query_startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$query_startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($query_startdate);
 
 if (!empty($_GET['enddate'])){
@@ -24,13 +24,13 @@ $enddate=date('Y/m/d');
 }
 $enddum = $enddate ;
 $enddate1="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$query_enddate=mysql_query($enddate1, $tryconnection) or die(mysql_error());
+$query_enddate=mysqli_query($tryconnection, $enddate1) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($query_enddate);
 
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
 $gethosp="SELECT HOSPNAME FROM CRITDATA" ;
-$Query_hosp = mysql_query($gethosp, $tryconnection) or die(mysql_error()) ;
+$Query_hosp = mysqli_query($tryconnection, $gethosp) or die(mysqli_error($mysqli_link)) ;
 $row_hosp = mysqli_fetch_array($Query_hosp) ;
 $hospname = $row_hosp['HOSPNAME'] ;
 
@@ -46,12 +46,12 @@ echo ' end ' . $enddate[0] ;
 $populate_ARINVOI = "INSERT INTO WILLYTRAVEL SELECT INVDATETIME, DATE_FORMAT(INVDATETIME,'%Y/%m/%d') as 'INVDTE',INVNO, COMPANY,CONTACT,INVDESCR FROM $file2search 
 JOIN PETMAST ON ($file2search.INVPET = PETMAST.PETID) join arcusto on ($file2search.invcust = arcusto.custno) WHERE INVMIN = 1 AND INVMAJ = 1 AND 
 PETMAST.PETTYPE > 2 AND INVDATETIME >= '$startdate[0]' and INVDATETIME <= '$enddate[0]'   " ;
-$query_setup1 = mysql_query($setup1, $tryconnection) or die(mysql_error()) ;
-$query_setup2 = mysql_query($setup2, $tryconnection) or die(mysql_error()) ;
-$query_setup3 = mysql_query($populate_ARINVOI, $tryconnection) or die(mysql_error()) ;
+$query_setup1 = mysqli_query($tryconnection, $setup1) or die(mysqli_error($mysqli_link)) ;
+$query_setup2 = mysqli_query($tryconnection, $setup2) or die(mysqli_error($mysqli_link)) ;
+$query_setup3 = mysqli_query($tryconnection, $populate_ARINVOI) or die(mysqli_error($mysqli_link)) ;
 $search_ARINVOI = "SELECT * FROM WILLYTRAVEL  GROUP BY INVDATETIME,COMPANY,CONTACT" ;
 
-$ARINVOI=mysql_query($search_ARINVOI, $tryconnection ) or die(mysql_error());
+$ARINVOI=mysqli_query($tryconnection, $search_ARINVOI) or die(mysqli_error($mysqli_link));
 $row_ARINVOI=mysqli_fetch_assoc($ARINVOI);
 echo ' ended ' ;
 

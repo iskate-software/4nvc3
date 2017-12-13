@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $descrip = $_GET['descrip'] ;
 $qty = $_GET['qty'] ;
@@ -17,7 +17,7 @@ echo $unixdate ;
 
 $update = "INSERT INTO NARCPUR (ITEM,DESCRIP,B4,QTY,QTYREM,DATEPURCH,VENDOR,SEQ,COMMENT) 
 VALUES ('$item', '$descrip', '$b4', '$qty', '$qty', '$unixdate','$vpartno','1','$comment' )" ;
-$do_it = mysql_query($update, $tryconnection) or die(mysql_error()) ;
+$do_it = mysqli_query($tryconnection, $update) or die(mysqli_error($mysqli_link)) ;
 
 header("Location:NARCOTIC_DRUG_SEARCH.php") ;
 

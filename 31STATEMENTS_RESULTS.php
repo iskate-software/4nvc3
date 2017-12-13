@@ -10,9 +10,9 @@ else {
 $startdate='00/00/0000';
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
@@ -23,7 +23,7 @@ $enddate=date('m/d/Y');
 }
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
@@ -33,11 +33,11 @@ $search_ARINVOI="SELECT *, DATE_FORMAT(INVDTE, '%m/%d/%Y') AS INVDTE FROM $file2
 $search_NET = "SELECT SUM(ITOTAL - PTAX - TAX) AS Total_NET FROM $file2search WHERE INVDTE >= '$startdate[0]' AND INVDTE <= '$enddate[0]'";
 $search_TAX = "SELECT SUM(TAX) AS Total_TAX FROM $file2search WHERE  INVDTE >= '$startdate[0]' AND INVDTE <= '$enddate[0]'";
 $search_PST = "SELECT SUM(PTAX) AS Total_PST FROM $file2search WHERE  INVDTE >= '$startdate[0]' AND INVDTE <= '$enddate[0]'";
-$ARINVOI=mysql_query($search_ARINVOI, $tryconnection ) or die(mysql_error());
+$ARINVOI=mysqli_query($tryconnection, $search_ARINVOI) or die(mysqli_error($mysqli_link));
 $row_ARINVOI=mysqli_fetch_assoc($ARINVOI);
-$NET = mysql_query($search_NET, $tryconnection ) or die(mysql_error()) ;
-$TAX = mysql_query($search_TAX, $tryconnection ) or die(mysql_error()) ;
-$PST = mysql_query($search_PST, $tryconnection ) or die(mysql_error()) ;
+$NET = mysqli_query($tryconnection, $search_NET) or die(mysqli_error($mysqli_link)) ;
+$TAX = mysqli_query($tryconnection, $search_TAX) or die(mysqli_error($mysqli_link)) ;
+$PST = mysqli_query($tryconnection, $search_PST) or die(mysqli_error($mysqli_link)) ;
 $row_NET = mysqli_fetch_array($NET) ;
 $row_TAX = mysqli_fetch_array($TAX) ;
 $row_PST = mysqli_fetch_array($PST) ;

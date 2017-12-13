@@ -2,7 +2,7 @@
 
 session_start() ;
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 // get the appropriate dates 
 
@@ -14,9 +14,9 @@ $startdate='00/00/0000';
 }
 $stdum = $startdate ;
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate1="SELECT STR_TO_DATE('$startdate','%m/%d/%Y') AS STARTDATE";
-$startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
+$startdate2=mysqli_query($tryconnection, $startdate1) or die(mysqli_error($mysqli_link));
 $startdate3=mysqli_fetch_array($startdate2);
 $startdate = $startdate3['STARTDATE'] ;
 
@@ -29,7 +29,7 @@ $enddate=date('m/d/Y');
 $enddum = $enddate ;
 
 $enddate1="SELECT STR_TO_DATE('$enddate','%m/%d/%Y') AS ENDDATE";
-$enddate2=mysql_query($enddate1, $tryconnection) or die(mysql_error());
+$enddate2=mysqli_query($tryconnection, $enddate1) or die(mysqli_error($mysqli_link));
 $enddate3=mysqli_fetch_array($enddate2);
 $enddate = $enddate3['ENDDATE'] ;
 
@@ -40,14 +40,14 @@ $num_days = ceil(abs(strtotime($enddate) - strtotime($startdate))/86400 ) + 1;
 // Make a temporary table to tabulate all the transactions.
 
 $Step_1 = "DROP TABLE IF EXISTS NARC_BAL" ;
-$QStep1 = mysql_query($Step_1, $tryconnection) or die(mysql_error()) ;
+$QStep1 = mysqli_query($tryconnection, $Step_1) or die(mysqli_error($mysqli_link)) ;
 
 $Step_2 = "CREATE TABLE NARC_BAL (ITEM CHAR(8),INVDTE DATE,  BLOCK INT(3),QTYREM_IN FLOAT(8,2), INBOUND FLOAT(8,2), QTY_DRAWN FLOAT (6,2), PATIENT VARCHAR(15), QTYREM FLOAT(8,2))";
-$QStep2 = mysql_query($Step_2, $tryconnection) or die(mysql_error()) ;
+$QStep2 = mysqli_query($tryconnection, $Step_2) or die(mysqli_error($mysqli_link)) ;
 
 // Identify the relevant drugs.
 $prep0 = "SELECT COUNT(DISTINCT(ITEM)) AS NUMITEM FROM NARCPUR WHERE ACTIVE <> 9" ;
-$Q_prep0 = mysql_query($prep0, $tryconnection) or die(mysql_error()) ;
+$Q_prep0 = mysqli_query($tryconnection, $prep0) or die(mysqli_error($mysqli_link)) ;
 $row_prep0 = mysqli_fetch_assoc($Q_prep0) ;
 $num_drugs = $row_prep0['NUMITEM'];
 // echo ' No of drugs = ' . $num_drugs ;
@@ -56,7 +56,7 @@ $block_num = intval($num_drugs / 3) ;
 $over = ($num_drugs % 3);
 //echo ' modulus = ' . $over ;
 $Select_em = "SELECT DISTINCT ITEM FROM NARCPUR WHERE ACTIVE <> 9 ORDER BY ITEM" ;
-$Query_Select = mysql_query($Select_em, $tryconnection) or die(mysql_error()) ;
+$Query_Select = mysqli_query($tryconnection, $Select_em) or die(mysqli_error($mysqli_link)) ;
 
 
 $master_block = 1 ;
@@ -68,19 +68,19 @@ while ($row_drug = mysqli_fetch_assoc($Query_Select)) {
 
  $drug = $row_drug['ITEM'] ; 
  $Open_bal = "SELECT SUM(QTYREM)  AS OPENING FROM NARCPUR WHERE ITEM = '$drug' AND DATEPURCH < '$startdate'";
- $Query_open = mysql_query($Open_bal, $tryconnection) or die(mysql_error()) ;
+ $Query_open = mysqli_query($tryconnection, $Open_bal) or die(mysqli_error($mysqli_link)) ;
  $row_bal = mysqli_fetch_assoc($Query_open) ;
  $open = $row_bal['OPENING'] ;
  
  // Then add back in everything which has been taken out after the last date..
  $put_back = "SELECT SUM(DRAWN) AS RETURNED FROM NARCLOG WHERE ITEM = '$drug' AND INVDTE >='$startdate'  AND INVDTE <= '$enddate'" ;
- $Q_putback = mysql_query($put_back, $tryconnection) or die(mysql_error()) ;
+ $Q_putback = mysqli_query($tryconnection, $put_back) or die(mysqli_error($mysqli_link)) ;
  $row_balPB = mysqli_fetch_assoc($Q_putback) ;
  $return = $row_balPB['RETURNED'] ;
  $open = $open + $return ;
  
  $shipped = "SELECT ITEM,QTY, DATEPURCH FROM NARCPUR WHERE ITEM = '$drug' AND DATEPURCH >= '$startdate' AND DATEPURCH <= '$enddate'  AND QTY <> 0 ORDER BY DATEPURCH " ;
- $Qship = mysql_query($shipped, $tryconnection) or die(mysql_error()) ;
+ $Qship = mysqli_query($tryconnection, $shipped) or die(mysqli_error($mysqli_link)) ;
  
 
 // set up one array for the purchases, and one for the dates of purchase
@@ -105,7 +105,7 @@ while ($row_Qship = mysqli_fetch_assoc($Qship)) {
   $date_drawn = array() ;
   $used_on = array() ;
   $use = "SELECT INVDTE, DRAWN, PETID FROM NARCLOG WHERE ITEM = '$drug' AND INVDTE >= '$startdate' AND INVDTE <= '$enddate' ORDER BY INVDTE" ;
-  $Quse = mysql_query($use, $tryconnection) or die(mysql_error()) ;
+  $Quse = mysqli_query($tryconnection, $use) or die(mysqli_error($mysqli_link)) ;
   
   while ($row_Qdrawn = mysqli_fetch_assoc($Quse)) {
    $drawn[] = $row_Qdrawn['DRAWN'] ;
@@ -140,7 +140,7 @@ while ($this_day <= $enddate) {
     // So we can create the table row
     $Make_a_row = "INSERT INTO NARC_BAL (ITEM,INVDTE,BLOCK,QTYREM_IN,INBOUND, QTY_DRAWN,QTYREM) 
                    VALUES ('$drug','$this_day', '$item', '$open', '$ship', '$used', '$close')" ;
-                   $Put_it_out = mysql_query($Make_a_row, $tryconnection) or die(mysql_error()) ;
+                   $Put_it_out = mysqli_query($tryconnection, $Make_a_row) or die(mysqli_error($mysqli_link)) ;
                    $open = $close ;
                  // reset the daily totals
                    $ship = 0 ;
@@ -167,7 +167,7 @@ while ($this_day <= $enddate) {
 } // end of each drug check.
 
 $balance = "SELECT * FROM NARC_BAL ORDER BY BLOCK,INVDTE" ;
-$Q_balance = mysql_query($balance, $tryconnection) or die(mysql_error()) ;
+$Q_balance = mysqli_query($tryconnection, $balance) or die(mysqli_error($mysqli_link)) ;
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

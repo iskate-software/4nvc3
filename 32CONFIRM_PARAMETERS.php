@@ -2,26 +2,26 @@
 session_start();
 require_once('../../tryconnection.php'); 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 //if (isset($_POST['start']) || isset($_POST['close'])) {
 
 //prep the data, as on a full month closing, it seems to zap the tables before it can print them....
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
-$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
+$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysqli_error($mysqli_link));
 $closedate=mysqli_fetch_array($closedate);
 
 // now do funny things with this, to cope with the fact that most transactions have hour,min,sec of 00:00:00,
 // but those that do not, get cut out of the <= comparison. So add 23 hours and 55 mins to the base date.
 
 $Round_about_midnight = "SELECT DATE_ADD('$closedate[0]', INTERVAL '23:55' HOUR_MINUTE) AS LATER" ;
-$Bump_it = mysql_query($Round_about_midnight, $tryconnection) or die(mysql_error()) ;
+$Bump_it = mysqli_query($tryconnection, $Round_about_midnight) or die(mysqli_error($mysqli_link)) ;
 $Get_Bump = mysqli_fetch_assoc($Bump_it) ;
 $closedate[0] = $Get_Bump['LATER'] ;
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
-$clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
+$clm = mysqli_query($tryconnection, $closemonth) or die(mysqli_error($mysqli_link)) ;
 $clm1 = mysqli_fetch_array($clm) ;
 
 $clm2 = $clm1[0] ;
@@ -29,70 +29,70 @@ $clm2 = $clm1[0] ;
 
 
 $DOCTAB11 = "TRUNCATE TABLE DOCTAB1" ;
-$DOCAVG1 = mysql_query($DOCTAB11, $tryconnection) or die(mysql_error()) ;
+$DOCAVG1 = mysqli_query($tryconnection, $DOCTAB11) or die(mysqli_error($mysqli_link)) ;
 echo ' DOCTAB1 zapped ' ;
 $SETUP3 = "DROP TABLE IF EXISTS ARTEMPC" ;
-$DOIT3 = mysql_query($SETUP3, $tryconnection) or die(mysql_error()) ;
+$DOIT3 = mysqli_query($tryconnection, $SETUP3) or die(mysqli_error($mysqli_link)) ;
 
 $SETUP4 = "CREATE TABLE ARTEMPC LIKE CASHDEP" ;
-$DOIT4 = mysql_query($SETUP4, $tryconnection) or die(mysql_error()) ;
+$DOIT4 = mysqli_query($tryconnection, $SETUP4) or die(mysqli_error($mysqli_link)) ;
 
 
 $SETUP5 = "INSERT INTO ARTEMPC SELECT * FROM CASHDEP WHERE DTEPAID <= '$closedate[0]' and INSTR(REFNO, 'Corrn') = 0 AND INSTR(REFNO , 'DEP.AP') = 0";
-$DOIT5 = mysql_query($SETUP5, $tryconnection) or die(mysql_error()) ;
+$DOIT5 = mysqli_query($tryconnection, $SETUP5) or die(mysqli_error($mysqli_link)) ;
 $SETUP6 = "INSERT INTO ARTEMPC SELECT * FROM ARCASHR WHERE DTEPAID <= '$closedate[0]' and INSTR(REFNO, 'Corrn') = 0  AND INSTR(REFNO , 'DEP.AP') = 0";
-$DOIT6 = mysql_query($SETUP6, $tryconnection) or die(mysql_error()) ;
+$DOIT6 = mysqli_query($tryconnection, $SETUP6) or die(mysqli_error($mysqli_link)) ;
 
 
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
-$DOIT1 = mysql_query($LIMIT1, $tryconnection ) or die(mysql_error()) ;
+$DOIT1 = mysqli_query($tryconnection, $LIMIT1) or die(mysqli_error($mysqli_link)) ;
 $FIRSTINV = mysqli_fetch_array($DOIT1);
 
 $LIMIT2 = "SELECT LASTINV FROM PREFER LIMIT 1" ;
-$DOIT2 = mysql_query($LIMIT2, $tryconnection ) or die(mysql_error()) ;
+$DOIT2 = mysqli_query($tryconnection, $LIMIT2) or die(mysqli_error($mysqli_link)) ;
 $LASTINV = mysqli_fetch_array($DOIT2);
 
 $SETUP1 = "DROP  TABLE IF EXISTS ARTEMPI" ;
 $SETUP2 = "CREATE TABLE ARTEMPI LIKE ARINVOI" ;
 $SETUP3 = "INSERT INTO ARTEMPI SELECT * FROM ARINVOI WHERE INVDTE <= '$closedate[0]' " ;
-$DOIT3 = mysql_query($SETUP1, $tryconnection ) or die(mysql_error()) ;
-$DOIT4 = mysql_query($SETUP2, $tryconnection ) or die(mysql_error()) ;
-$DOIT5 = mysql_query($SETUP3, $tryconnection ) or die(mysql_error()) ;
+$DOIT3 = mysqli_query($tryconnection, $SETUP1) or die(mysqli_error($mysqli_link)) ;
+$DOIT4 = mysqli_query($tryconnection, $SETUP2) or die(mysqli_error($mysqli_link)) ;
+$DOIT5 = mysqli_query($tryconnection, $SETUP3) or die(mysqli_error($mysqli_link)) ;
 
 $SETUP1 = "DROP TABLE IF EXISTS MSALES" ;
-$PREP1 = mysql_query($SETUP1, $tryconnection) or die(mysql_error()) ;
+$PREP1 = mysqli_query($tryconnection, $SETUP1) or die(mysqli_error($mysqli_link)) ;
 
 $SETUP2 = "CREATE TABLE MSALES LIKE SALESCAT" ;
-$PREP2 = mysql_query($SETUP2, $tryconnection) or die(mysql_error()) ;
+$PREP2 = mysqli_query($tryconnection, $SETUP2) or die(mysqli_error($mysqli_link)) ;
 
 // $SETUP3 = "INSERT INTO MSALES SELECT * FROM SALESCAT WHERE INVREVCAT <> 0 AND INVREVCAT <> 91 AND INVDTE <= '$closedate[0]' AND INVNO >='$FIRSTINV[0]' AND INVNO <= '$LASTINV[0]' AND INVDECLINE=0"  ; 
 $SETUP3 = "INSERT INTO MSALES SELECT * FROM SALESCAT WHERE INVREVCAT <> 0 AND INVREVCAT <> 91 AND INVDTE <= '$closedate[0]'  AND INVDECLINE=0"  ;
-$PREP3 = mysql_query($SETUP3, $tryconnection) or die(mysql_error()) ;
+$PREP3 = mysqli_query($tryconnection, $SETUP3) or die(mysqli_error($mysqli_link)) ;
 
 // Clean up any weird revenue mapping.
 
 $SETUP4 = "UPDATE MSALES SET INVREVCAT = INVREVCAT / 10 * 10, INVMAJ = INVMAJ / 10 * 10 " ;
-$PREP4 = mysql_query($SETUP4, $tryconnection) or die(mysql_error()) ;
+$PREP4 = mysqli_query($tryconnection, $SETUP4) or die(mysqli_error($mysqli_link)) ;
 
 $DOCTAB12 = "CREATE  TABLE DOCTAB1 (DOCTOR VARCHAR(40), CAN9 FLOAT(8,2), FEL FLOAT(8,2), EQ FLOAT(8,2), BOV FLOAT(8,2),
             CAP FLOAT(8,2), PORC FLOAT(8,2), AV FLOAT(8,2), OTHER FLOAT(8,2), INVOICES INT(7), TOTAL FLOAT(9,2), AVERAGE FLOAT(9.2))" ;
 //$DOCAVG2 = mysql_query($DOCTAB12, $tryconnection) or die(mysql_error()) ;
 
 $DOCTAB13 =  "INSERT INTO DOCTAB1  (DOCTOR)  (SELECT DISTINCT INVORDDOC FROM MSALES JOIN DOCTOR ON INVORDDOC = DOCTOR ) ORDER BY PRIORITY " ;
-$DOCAVG3 = mysql_query($DOCTAB13, $tryconnection) or die(mysql_error()) ;
+$DOCAVG3 = mysqli_query($tryconnection, $DOCTAB13) or die(mysqli_error($mysqli_link)) ;
 echo ' Doctors added  now trying... ' ;
 $DOCTAB13A = "UPDATE DOCTAB1 SET CAN9 = 0, FEL = 0, EQ = 0, BOV = 0, CAP = 0, PORC = 0, AV = 0, OTHER = 0, INVOICES = 0, TOTAL = 0, AVERAGE = 0" ;
 echo $DOCTAB13A . '</br>' ;
-$DOCAVG3A = mysql_query($DOCTAB13A, $tryconnection) or die(mysql_error()) ;
+$DOCAVG3A = mysqli_query($tryconnection, $DOCTAB13A) or die(mysqli_error($mysqli_link)) ;
  echo ' Zeroed ' ;
 $DOCTAB14 = "SELECT INVORDDOC,SUM(INVTOT) AS INVTOT,INVLGSM FROM MSALES WHERE INVDECLINE <> 1 AND INVTOT IS NOT NULL GROUP BY INVORDDOC, INVLGSM" ;
-$DOCAVG4 = mysql_query($DOCTAB14, $tryconnection) or die(mysql_error()) ;
+$DOCAVG4 = mysqli_query($tryconnection, $DOCTAB14) or die(mysqli_error($mysqli_link)) ;
 
 $DOCTAB14A = "SELECT INVORDDOC,SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVDECLINE <> 1 AND INVTOT IS NOT NULL GROUP BY INVORDDOC" ;
-$DOCAVG4A = mysql_query($DOCTAB14A, $tryconnection) or die(mysql_error()) ;
+$DOCAVG4A = mysqli_query($tryconnection, $DOCTAB14A) or die(mysqli_error($mysqli_link)) ;
             
 $DOCTAB15 = "SELECT COUNT(DISTINCT INVNO) AS INVNO,INVORDDOC FROM MSALES GROUP BY INVORDDOC" ;
-$DOCAVG5 = mysql_query($DOCTAB15, $tryconnection) or die(mysql_error()) ;
+$DOCAVG5 = mysqli_query($tryconnection, $DOCTAB15) or die(mysqli_error($mysqli_link)) ;
 
 // do the species totals
  echo ' now filling it up ' ;
@@ -103,35 +103,35 @@ while ($row_T = mysqli_fetch_assoc($DOCAVG4)) {
  switch ($lgsm) {
   case  1 ;
    $DOCTAB16 = "UPDATE DOCTAB1 SET CAN9 = '$tot' WHERE DOCTOR = '$doc'  LIMIT 1" ;
-   $DOCAVG6 = mysql_query($DOCTAB16, $tryconnection) or die(mysql_error()) ;
+   $DOCAVG6 = mysqli_query($tryconnection, $DOCTAB16) or die(mysqli_error($mysqli_link)) ;
    break;
   case  2 ;
    $DOCTAB16 = "UPDATE DOCTAB1 SET FEL = '$tot' WHERE DOCTOR = '$doc'  LIMIT 1" ;
-   $DOCAVG6 = mysql_query($DOCTAB16, $tryconnection) or die(mysql_error()) ;
+   $DOCAVG6 = mysqli_query($tryconnection, $DOCTAB16) or die(mysqli_error($mysqli_link)) ;
    break;
   case  3 ;
    $DOCTAB16 = "UPDATE DOCTAB1 SET EQ = '$tot' WHERE DOCTOR = '$doc'  LIMIT 1" ;
-   $DOCAVG6 = mysql_query($DOCTAB16, $tryconnection) or die(mysql_error()) ;
+   $DOCAVG6 = mysqli_query($tryconnection, $DOCTAB16) or die(mysqli_error($mysqli_link)) ;
    break;
   case  4 ;
    $DOCTAB16 = "UPDATE DOCTAB1 SET BOV = '$tot' WHERE DOCTOR = '$doc' LIMIT 1 " ;
-   $DOCAVG6 = mysql_query($DOCTAB16, $tryconnection) or die(mysql_error()) ;
+   $DOCAVG6 = mysqli_query($tryconnection, $DOCTAB16) or die(mysqli_error($mysqli_link)) ;
    break;
   case  5 ;
    $DOCTAB16 = "UPDATE DOCTAB1 SET CAP = '$tot' WHERE DOCTOR = '$doc'  LIMIT 1" ;
-   $DOCAVG6 = mysql_query($DOCTAB16, $tryconnection) or die(mysql_error()) ;
+   $DOCAVG6 = mysqli_query($tryconnection, $DOCTAB16) or die(mysqli_error($mysqli_link)) ;
    break;
   case  6 ;
    $DOCTAB16 = "UPDATE DOCTAB1 SET PORC = '$tot' WHERE DOCTOR = '$doc'  LIMIT 1" ;
-   $DOCAVG6 = mysql_query($DOCTAB16, $tryconnection) or die(mysql_error()) ;
+   $DOCAVG6 = mysqli_query($tryconnection, $DOCTAB16) or die(mysqli_error($mysqli_link)) ;
    break;
   case  7 ;
    $DOCTAB16 = "UPDATE DOCTAB1 SET AV = '$tot' WHERE DOCTOR = '$doc'  LIMIT 1" ;
-   $DOCAVG6 = mysql_query($DOCTAB16, $tryconnection) or die(mysql_error()) ;
+   $DOCAVG6 = mysqli_query($tryconnection, $DOCTAB16) or die(mysqli_error($mysqli_link)) ;
    break;
   case  8 ;
    $DOCTAB16 = "UPDATE DOCTAB1 SET OTHER = '$tot' WHERE DOCTOR = '$doc'  LIMIT 1" ;
-   $DOCAVG6 = mysql_query($DOCTAB16, $tryconnection) or die(mysql_error()) ;
+   $DOCAVG6 = mysqli_query($tryconnection, $DOCTAB16) or die(mysqli_error($mysqli_link)) ;
    break;
    
    }
@@ -144,7 +144,7 @@ while ($row_S = mysqli_fetch_assoc($DOCAVG4A)) {
  $doc = $row_S['INVORDDOC'] ;
 
  $DOCTAB17 = "UPDATE DOCTAB1 SET TOTAL = TOTAL + '$inv' WHERE DOCTOR = '$doc' LIMIT 1" ;
- $DOCAVG7 = mysql_query($DOCTAB17, $tryconnection) or die(mysql_error()) ;
+ $DOCAVG7 = mysqli_query($tryconnection, $DOCTAB17) or die(mysqli_error($mysqli_link)) ;
  
 }
 
@@ -152,13 +152,13 @@ while ($row_T = mysqli_fetch_assoc($DOCAVG5)) {
  $inv = $row_T['INVNO'] ;
  $doc = $row_T['INVORDDOC'] ;
  $DOCTAB18 = "UPDATE DOCTAB1 SET INVOICES = '$inv' WHERE DOCTOR = '$doc' LIMIT 1" ;
- $DOCAVG8 = mysql_query($DOCTAB18, $tryconnection) or die(mysql_error()) ;
+ $DOCAVG8 = mysqli_query($tryconnection, $DOCTAB18) or die(mysqli_error($mysqli_link)) ;
  
 }
 
 // and complete the table (averages)
 $DOCTAB19 = "UPDATE DOCTAB1 SET AVERAGE = ROUND(TOTAL / INVOICES,2)" ;
-$DOCAVG9 = mysql_query($DOCTAB19, $tryconnection) or die(mysql_error()) ;
+$DOCAVG9 = mysqli_query($tryconnection, $DOCTAB19) or die(mysqli_error($mysqli_link)) ;
 
 //}
 ?>

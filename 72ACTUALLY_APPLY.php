@@ -3,9 +3,9 @@
 echo ' started ' ;
 session_start();
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CLASSES = "SELECT CLASSID, CLASS, REGITM3, VAR3, ROUNDER1, MINPRICE1, REGITM6, VAR6, ROUNDER4, MINPRICE4 FROM FORMULA1 ORDER BY CLASS";
-$CLASSES = mysql_query($query_CLASSES, $tryconnection) or die(mysql_error());
+$CLASSES = mysqli_query($tryconnection, $query_CLASSES) or die(mysqli_error($mysqli_link));
 $row_CLASSES = mysqli_fetch_assoc($CLASSES);
 
 
@@ -25,14 +25,14 @@ function invtround($x,$y)
   $_SESSION["class"] = $class ;
   $CLASSX = "SELECT REGITM3,REGITM6,ROUNDER1,MINPRICE1,ROUNDER4,MINPRICE4 FROM FORMULA1 WHERE CLASS = '$class' LIMIT 1" ;
 
-  $get_CLASS = mysql_query($CLASSX, $tryconnection) or die(mysql_error()) ;
+  $get_CLASS = mysqli_query($tryconnection, $CLASSX) or die(mysqli_error($mysqli_link)) ;
   $row_CLASS = mysqli_fetch_assoc($get_CLASS) ;
  
   $count = 0 ;
   $meddle = 0 ;
   $AFFECTED = "SELECT ITEM, ITEMID, COST,PRICE,UPRICE,PKGQTY, MARKUP, MANUAL, CLASS FROM ARINVT WHERE CLASS = '$class' " ;
 
-  $get_AFFECTED = mysql_query($AFFECTED, $tryconnection) or die(mysql_error()) ;
+  $get_AFFECTED = mysqli_query($tryconnection, $AFFECTED) or die(mysqli_error($mysqli_link)) ;
   $total = 0 ;
   
   while ($row_AFFECTED = mysqli_fetch_assoc($get_AFFECTED)) {
@@ -69,7 +69,7 @@ function invtround($x,$y)
       
       $UPDFEE = "UPDATE ARINVT SET PRICE = '$price', UPRICE = '$uprice' WHERE ITEMID = '$itemid' LIMIT 1 " ;
 
-      $do_it = mysql_query($UPDFEE, $tryconnection) or die(mysql_error()) ;
+      $do_it = mysqli_query($tryconnection, $UPDFEE) or die(mysqli_error($mysqli_link)) ;
     
      $count++ ;
      if ($price != $oprice || $uprice != $ouprice) {

@@ -2,9 +2,9 @@
 
 require_once('../../tryconnection.php'); 
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $GET_LAST = "SELECT DATE_FORMAT(MEDATE,'%m/%d/%Y') AS MEDATE FROM CRITDATA LIMIT 1" ;
-$QUERY_D  = mysql_query($GET_LAST) or die(mysql_error()) ;
+$QUERY_D  = mysqli_query($mysqli_link, $GET_LAST) or die(mysqli_error($mysqli_link)) ;
 $ME_Date = mysqli_fetch_assoc($QUERY_D) ;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

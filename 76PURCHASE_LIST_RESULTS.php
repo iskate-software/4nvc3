@@ -2,7 +2,7 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $reqsupplier = $_GET['supplier'] ;
 
@@ -13,9 +13,9 @@ else {
 $startdate='00/00/0000';
 }
 $stdum = $startdate ;
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 echo ' start ' . $startdate[0] ;
@@ -27,23 +27,23 @@ $enddate=date('m/d/Y');
 }
 $enddum = $enddate ;
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 
 $select_INVTHIST = "SELECT ITEM,ARINVT.DESCRIP,VPCCODE,INVTHIST.SUPPLIER, DRUGCOST,ARINVTYPE,INVTHIST.ORDERED,BACKORDER,RECEIVED,RECTDATE, SUM(`UNITS`) AS `UNITS` 
 FROM INVTHIST JOIN ARINVT ON INVTHIST.VPCCODE = ARINVT.VPARTNO WHERE ARINVTYPE = 'P' AND RECEIVED = 1 AND UNITS <> 0 AND INVTHIST.SUPPLIER = '$reqsupplier' AND BACKORDER <> 1 AND INVTHIST.ORDERED >= '$startdate[0]' AND INVTHIST.ORDERED <= '$enddate[0]' GROUP BY INVTHIST.ORDERED,ARINVT.DESCRIP" ;
-$INVTHIST = mysql_query($select_INVTHIST) or die(mysql_error());
+$INVTHIST = mysqli_query($mysqli_link, $select_INVTHIST) or die(mysqli_error($mysqli_link));
 $row_INVTHIST = mysqli_fetch_assoc($INVTHIST);
 
 $select_address = "SELECT VENDOR,ADDRESS FROM VENDORS WHERE SHORTVEN = '$reqsupplier' LIMIT 1" ;
-$query_address = mysql_query($select_address, $tryconnection) or die(mysql_error()) ;
+$query_address = mysqli_query($tryconnection, $select_address) or die(mysqli_error($mysqli_link)) ;
 $row_address=mysqli_fetch_assoc($query_address) ;
 
 
  if (isset($_POST['finish'])){
 	foreach ($_POST['deleted'] as $deleted){
 	$delete_INVSOLD = "DELETE FROM INVTHIST WHERE VPCCODE=$deleted AND RECEIVED = 0";
-	$delete_INVSOLD = mysql_query($delete_INVSOLD) or die(mysql_error());
+	$delete_INVSOLD = mysqli_query($mysqli_link, $delete_INVSOLD) or die(mysqli_error($mysqli_link));
 	}
 $closewin="window.open('../COMMON/INVENTORY_DIRECTORY.php','_self');";
 }

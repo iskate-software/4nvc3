@@ -1,11 +1,11 @@
 <?php 
 session_start();
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $query_CLASSES = "SELECT CLASSID, CLASS, CONCAT(REGITM1,' ',REGOPR1,' ',REGITM2,' ' ,REGOPR2, ' ' , REGITM3) AS VIEWFORM1, 
   REGITM1, REGOPR1, REGITM2, REGOPR2, REGITM3, ROUNDER1,MINPRICE1, CONCAT(REGITM4,' ',REGOPR4,' ',REGITM5,' ' ,REGOPR5, ' ',REGITM6) AS VIEWFORM4, 
   ROUNDER4, MINPRICE4,REGITM6,MEMO1,MEMO2 FROM FORMULA1 ORDER BY CLASS";
-$CLASSES = mysql_query($query_CLASSES, $tryconnection) or die(mysql_error());
+$CLASSES = mysqli_query($tryconnection, $query_CLASSES) or die(mysqli_error($mysqli_link));
 $row_CLASSES = mysqli_fetch_assoc($CLASSES);
 //$totalRows_CLASSES = mysql_num_rows($CLASSES);
 $row_CLASSES = mysqli_fetch_assoc($CLASSES);

@@ -10,9 +10,9 @@ else {
 $startdate='00/00/0000';
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
@@ -23,7 +23,7 @@ $enddate=date('m/d/Y');
 }
 
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
@@ -45,24 +45,24 @@ $search_ARCASH4 = "INSERT INTO EXTRACASH SELECT CUSTNO, DATE_FORMAT(DTEPAID, '%m
 $search_ARCASH5 = "INSERT INTO EXTRACASH SELECT CUSTNO, DATE_FORMAT(DTEPAID, '%m/%d/%Y') AS DTEPAID FROM LASTCASH, AMTPAID WHERE DTEPAID >= '$startdate[0]' ORDER BY CUSTNO";
 $search_AR CASH6 = "SELECT CUSTNO,AMTPAID FROM EXTRACASH" ;
 
-$ARCUSTO1 = mysql_query($search_ARCUSTO1, $tryconnection) or die(mysql_error()) ;
-$ARCUSTO2 = mysql_query($search_ARCUSTO2, $tryconnection) or die(mysql_error()) ;
-$ARCUSTO3 = mysql_query($search_ARCUSTO3, $tryconnection) or die(mysql_error()) ;
-$ARINVOI1=mysql_query($search_ARINVOI1, $tryconnection) or die(mysql_error());
-$ARINVOI2=mysql_query($search_ARINVOI2, $tryconnection) or die(mysql_error());
-$ARINVOI3=mysql_query($search_ARINVOI3, $tryconnection) or die(mysql_error());
-$ARINVOI4=mysql_query($search_ARINVOI4, $tryconnection) or die(mysql_error());
-$ARINVOI5=mysql_query($search_ARINVOI5, $tryconnection) or die(mysql_error());
-$CASH1=mysql_query($search_ARCASH1, $tryconnection) or die(mysql_error());
-$CASH2=mysql_query($search_ARCASH2, $tryconnection) or die(mysql_error());
-$CASH3=mysql_query($search_ARCASH3, $tryconnection) or die(mysql_error());
-$CASH4=mysql_query($search_ARCASH4, $tryconnection) or die(mysql_error());
-$CASH5=mysql_query($search_ARCASH5, $tryconnection) or die(mysql_error());
-$CASH6=mysql_query($search_ARCASH6, $tryconnection) or die(mysql_error());
+$ARCUSTO1 = mysqli_query($tryconnection, $search_ARCUSTO1) or die(mysqli_error($mysqli_link)) ;
+$ARCUSTO2 = mysqli_query($tryconnection, $search_ARCUSTO2) or die(mysqli_error($mysqli_link)) ;
+$ARCUSTO3 = mysqli_query($tryconnection, $search_ARCUSTO3) or die(mysqli_error($mysqli_link)) ;
+$ARINVOI1=mysqli_query($tryconnection, $search_ARINVOI1) or die(mysqli_error($mysqli_link));
+$ARINVOI2=mysqli_query($tryconnection, $search_ARINVOI2) or die(mysqli_error($mysqli_link));
+$ARINVOI3=mysqli_query($tryconnection, $search_ARINVOI3) or die(mysqli_error($mysqli_link));
+$ARINVOI4=mysqli_query($tryconnection, $search_ARINVOI4) or die(mysqli_error($mysqli_link));
+$ARINVOI5=mysqli_query($tryconnection, $search_ARINVOI5) or die(mysqli_error($mysqli_link));
+$CASH1=mysqli_query($tryconnection, $search_ARCASH1) or die(mysqli_error($mysqli_link));
+$CASH2=mysqli_query($tryconnection, $search_ARCASH2) or die(mysqli_error($mysqli_link));
+$CASH3=mysqli_query($tryconnection, $search_ARCASH3) or die(mysqli_error($mysqli_link));
+$CASH4=mysqli_query($tryconnection, $search_ARCASH4) or die(mysqli_error($mysqli_link));
+$CASH5=mysqli_query($tryconnection, $search_ARCASH5) or die(mysqli_error($mysqli_link));
+$CASH6=mysqli_query($tryconnection, $search_ARCASH6) or die(mysqli_error($mysqli_link));
 
 // now take out from the client file balances all the invoices which are beyond the selection date, and add the cash in to get the retroactive data.
 $select_CLIENT = "SELECT DISTINCT CUSTNO FROM INVOICES" ;
-$TAKEAWAY = mysql_query($select_CLIENT, $tryconnection) or die(mysql_error()) ;
+$TAKEAWAY = mysqli_query($tryconnection, $select_CLIENT) or die(mysqli_error($mysqli_link)) ;
 $row_CLIENT = mysqli_fetch_assoc($TAKEAWAY) ;
 $invcust = array() ;
 do {
@@ -70,18 +70,18 @@ $invcust[] = $row_CLIENT['CUSTNO'] ;
 } while ($row_CLIENT=mysqli_fetch_assoc($TAKEAWAY)) 
 foreach ($invcust as $invcust2 {
        $update_CUSTBAL = "UPDATE CUSTBAL SET BALANCE = BALANCE - $row_ARINVOI['ITOTAL'] WHERE CUSTNO = '$invcust2' ";
-       $C_U = mysql_query($update_CUSTBAL, $tryconnection) or die(mysql_error()) ;
+       $C_U = mysqli_query($tryconnection, $update_CUSTBAL) or die(mysqli_error($mysqli_link)) ;
        }
 
 while ($row_CASH=mysqli_fetch_assoc($CASH6)) {
        $update_CUSTBAL = "UPDATE CUSTBAL SET BALANCE = BALANCE + $row_CASH['AMTPAID'] WHERE CUSTNO = $row_CASH['CUSTNO'] ";
-       $C_U2 = mysql_query($update_CUSTBAL, $tryconnection) or die(mysql_error()) ;
+       $C_U2 = mysqli_query($tryconnection, $update_CUSTBAL) or die(mysqli_error($mysqli_link)) ;
        }
 
 // and finally
 
 $CLIENT = "SELECT COMPANY,CONTACT,CAREA,PHONE,BALANCE,CREDIT FROM CUSTBAL WHERE BALANCE <> 0 OR CREDIT <> 0 ORDER BY COMPANY,CONTACT ASC" ;
-$get_CLIENT = mysql_query($CLIENT, $tryconnection) or die(mysql_error()) ;
+$get_CLIENT = mysqli_query($tryconnection, $CLIENT) or die(mysqli_error($mysqli_link)) ;
 $row_CLIENT = mysqli_fetch_assoc($get_CLIENT) ;
 
 

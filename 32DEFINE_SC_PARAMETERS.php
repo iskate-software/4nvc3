@@ -3,10 +3,10 @@
 // first, the shenanigans to get the invoice date, and the service charge cutoff dates
 
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $DAY = "SELECT DAY(NOW()) AS DAY" ;
-$GET_day = mysql_query($DAY, $tryconnection) or die(mysql_error());
+$GET_day = mysqli_query($tryconnection, $DAY) or die(mysqli_error($mysqli_link));
 $row_day = mysqli_fetch_assoc($GET_day) ;
  if ($row_day['DAY'] > 27) {
  $Base_date= "SELECT DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 MONTH),'%m/%d/%Y') AS CUTOFF" ;
@@ -16,16 +16,16 @@ $row_day = mysqli_fetch_assoc($GET_day) ;
  $Get_invdte= "SELECT DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 MONTH),'%m/%d/%Y') AS INVDATE" ;
  }
  
-$FETCH_it = mysql_query($Base_date, $tryconnection) or die(mysql_error()) ;
+$FETCH_it = mysqli_query($tryconnection, $Base_date) or die(mysqli_error($mysqli_link)) ;
 $row_FETCH = mysqli_fetch_assoc($FETCH_it) ;
 $scdate = $row_FETCH['CUTOFF'] ;
 
-$FETCH1_it = mysql_query($Get_invdte, $tryconnection) or die(mysql_error()) ;
+$FETCH1_it = mysqli_query($tryconnection, $Get_invdte) or die(mysqli_error($mysqli_link)) ;
 $row_FETCH1 = mysqli_fetch_assoc($FETCH1_it) ;
 $invdate = $row_FETCH1['INVDATE'] ;
 
 $GET_PCT = "SELECT SVPCT,MINSVCHG,BALOWI FROM CRITDATA LIMIT 1" ;
-$PARAMETERS = mysql_query($GET_PCT, $tryconnection) or die(mysql_error()) ;
+$PARAMETERS = mysqli_query($tryconnection, $GET_PCT) or die(mysqli_error($mysqli_link)) ;
 $row_CRITDATA = mysqli_fetch_assoc($PARAMETERS) ;
 $svpct = $row_CRITDATA['SVPCT'] ;
 $minsvchg = $row_CRITDATA['MINSVCHG'] ;

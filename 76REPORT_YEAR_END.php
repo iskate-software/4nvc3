@@ -2,15 +2,15 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 
 $query_INVENTORY = "SELECT ITEM,DESCRIP,VPARTNO,ONHAND,COST,TRIM(SEQ) AS SEQ,CLASS,PKGQTY FROM ARINVT WHERE ONHAND <> 0 AND SEQ = 'P' ORDER BY ITEM ";
-$INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
+$INVENTORY = mysqli_query($tryconnection, $query_INVENTORY) or die(mysqli_error($mysqli_link));
 $row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 $query_tot = "SELECT SUM(ONHAND/PKGQTY*COST) AS TOTAL FROM ARINVT WHERE ONHAND <> 0 AND SEQ = 'P'" ;
-$grand_tot = mysql_query($query_tot, $tryconnection) or die(mysql_error()) ;
+$grand_tot = mysqli_query($tryconnection, $query_tot) or die(mysqli_error($mysqli_link)) ;
 $row_tot = mysqli_fetch_assoc($grand_tot) ;
 
 

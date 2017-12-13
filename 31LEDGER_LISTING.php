@@ -11,59 +11,59 @@ $client=$_SESSION['client'];
 
 // A Client name and number, and starting dates and ending dates are required.
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $LEDG1 = "DROP TEMPORARY TABLE IF EXISTS LEDGER" ;
-$LEDG1P = mysql_query($LEDG1, $tryconnection) or die(mysql_error()) ;
+$LEDG1P = mysqli_query($tryconnection, $LEDG1) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG2 = "CREATE TEMPORARY TABLE LEDGER LIKE ARARECV" ;
-$LEDG2P = mysql_query($LEDG2, $tryconnection) or die(mysql_error()) ;
+$LEDG2P = mysqli_query($tryconnection, $LEDG2) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG2b = "ALTER TABLE LEDGER ADD COLUMN PAYYEAR INT(4) " ;
-$LEDG2bP = mysql_query($LEDG2b,$tryconnection) or die(mysql_error()) ;
+$LEDG2bP = mysqli_query($tryconnection, $LEDG2b) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG2c = "ALTER TABLE LEDGER DROP COLUMN UNIQUE1 " ;
-$LEDG2cP = mysql_query($LEDG2c,$tryconnection) or die(mysql_error()) ;
+$LEDG2cP = mysqli_query($tryconnection, $LEDG2c) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG2A = "ALTER TABLE LEDGER ADD COLUMN A1 INT(5) PRIMARY KEY AUTO_INCREMENT" ;
-$LEDG2AP = mysql_query($LEDG2A,$tryconnection) or die(mysql_error()) ;
+$LEDG2AP = mysqli_query($tryconnection, $LEDG2A) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG3 = "INSERT INTO LEDGER (CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, AMTPAID, PONUM, REFNO, IBAL) SELECT CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, 0, PONUM, REFNO, 0 FROM ARYINVO WHERE CUSTNO = '$client'" ;
-$LEDG3P = mysql_query($LEDG3, $tryconnection) or die(mysql_error()) ;
+$LEDG3P = mysqli_query($tryconnection, $LEDG3) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG4 = "INSERT INTO LEDGER (CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, DTEPAID, PAYYEAR, AMTPAID, PONUM, REFNO, IBAL) SELECT CUSTNO, COMPANY, INVNO, INVDTE, 0, DTEPAID,YEAR(INVDTE) AS PAYYEAR, AMTPAID, PONUM,REFNO, 0 FROM ARYCASH WHERE CUSTNO = '$client'" ;
-$LEDG4P = mysql_query($LEDG4, $tryconnection) or die(mysql_error()) ;
+$LEDG4P = mysqli_query($tryconnection, $LEDG4) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG5 = "INSERT INTO LEDGER (CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, AMTPAID, PONUM, REFNO, IBAL) SELECT CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, 0, PONUM, REFNO, 0 FROM INVLAST WHERE CUSTNO = '$client'" ;
-$LEDG5P = mysql_query($LEDG5, $tryconnection) or die(mysql_error()) ;
+$LEDG5P = mysqli_query($tryconnection, $LEDG5) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG6 = "INSERT INTO LEDGER (CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, DTEPAID, PAYYEAR, AMTPAID, PONUM, REFNO, IBAL) SELECT CUSTNO, COMPANY, INVNO, INVDTE, 0, DTEPAID,YEAR(INVDTE) AS PAYYEAR, AMTPAID, PONUM, REFNO, 0 FROM LASTCASH WHERE CUSTNO = '$client'" ;
-$LEDG6P = mysql_query($LEDG6, $tryconnection) or die(mysql_error()) ;
+$LEDG6P = mysqli_query($tryconnection, $LEDG6) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG7 = "INSERT INTO LEDGER (CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, AMTPAID, PONUM, REFNO, IBAL) SELECT CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, 0, PONUM, REFNO, 0 FROM ARINVOI WHERE CUSTNO = '$client'" ;
-$LEDG7P = mysql_query($LEDG7, $tryconnection) or die(mysql_error()) ;
+$LEDG7P = mysqli_query($tryconnection, $LEDG7) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG8 = "INSERT INTO LEDGER (CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, DTEPAID, PAYYEAR, AMTPAID, PONUM, REFNO, IBAL) SELECT CUSTNO, COMPANY, INVNO, INVDTE, 0, DTEPAID,YEAR(INVDTE) AS PAYYEAR, AMTPAID, PONUM, REFNO, 0 FROM CASHDEP WHERE CUSTNO = '$client'" ;
-$LEDG8P = mysql_query($LEDG8, $tryconnection) or die(mysql_error()) ;
+$LEDG8P = mysqli_query($tryconnection, $LEDG8) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG9 = "INSERT INTO LEDGER (CUSTNO, COMPANY, INVNO, INVDTE, ITOTAL, DTEPAID, PAYYEAR, AMTPAID, PONUM, REFNO, IBAL) SELECT CUSTNO, COMPANY, INVNO, INVDTE, 0, DTEPAID,YEAR(INVDTE) AS PAYYEAR, AMTPAID, PONUM, REFNO, 0 FROM ARCASHR WHERE CUSTNO = '$client'" ;
-$LEDG9P = mysql_query($LEDG9, $tryconnection) or die(mysql_error()) ;
+$LEDG9P = mysqli_query($tryconnection, $LEDG9) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG9A = "DELETE FROM LEDGER WHERE REFNO = 'DEP.AP.'  " ;
-$LEDG9AP = mysql_query($LEDG9A, $tryconnection) or die(mysql_error()) ;
+$LEDG9AP = mysqli_query($tryconnection, $LEDG9A) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG10 = "DROP  TABLE IF EXISTS LEDGLIST" ;
-$LEDG10P = mysql_query($LEDG10, $tryconnection) or die(mysql_error()) ;
+$LEDG10P = mysqli_query($tryconnection, $LEDG10) or die(mysqli_error($mysqli_link)) ;
 
 $LEDG11 = "CREATE  TABLE LEDGLIST SELECT * FROM LEDGER ORDER BY INVDTE, LPAD(TRIM(INVNO),7,' '), A1" ;
-$LEDG11P = mysql_query($LEDG11, $tryconnection) or die(mysql_error()) ;
+$LEDG11P = mysqli_query($tryconnection, $LEDG11) or die(mysqli_error($mysqli_link)) ;
 
 $HEADING = "SELECT COMPANY FROM LEDGER ORDER BY INVDTE DESC LIMIT 1" ;
-$query_head = mysql_query($HEADING, $tryconnection) or die(mysql_error()) ;
+$query_head = mysqli_query($tryconnection, $HEADING) or die(mysqli_error($mysqli_link)) ;
 $row_head = mysqli_fetch_assoc($query_head) ;
 
 $query_LEDGLIST = "SELECT *, DATE_FORMAT(INVDTE, '%m/%d/%Y') AS INVDTE, DATE_FORMAT(DTEPAID, '%m/%d/%Y') AS DTEPAID, DATE_FORMAT(INVDTE, '%Y/%m/%d') AS DATESEQ FROM LEDGLIST ORDER BY DATESEQ ASC, LPAD(TRIM(INVNO),7,' '),  A1" ;
-$LEDGLIST = mysql_query($query_LEDGLIST, $tryconnection) or die(mysql_error()) ;
+$LEDGLIST = mysqli_query($tryconnection, $query_LEDGLIST) or die(mysqli_error($mysqli_link)) ;
 $row_LEDGLIST = mysqli_fetch_assoc($LEDGLIST);
 
 // now go through this file, building the balance forward into the IBAL field.
@@ -361,7 +361,7 @@ document.getElementById(x).style.backgroundColor="#FFFFFF";
 	 }
 	 $key = $row_LEDGLIST['A1'] ;
 	 $UPDLEGE = "UPDATE LEDGLIST SET IBAL = '$balfwd' WHERE A1 = '$key' " ;
-	 $doit = mysql_query($UPDLEGE, $tryconnection) or die(mysql_error()) ;
+	 $doit = mysqli_query($tryconnection, $UPDLEGE) or die(mysqli_error($mysqli_link)) ;
 	}
 	
   echo number_format($balfwd,2).'&nbsp;&nbsp;</td>

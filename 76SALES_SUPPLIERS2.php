@@ -2,10 +2,10 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $get_supplier = "SELECT DISTINCT SUPPLIER FROM ARINVT ORDER BY TRIM(SUPPLIER) ASC" ;
-$query_supplier = mysql_query($get_supplier, $tryconnection) or die(mysql_error()) ;
+$query_supplier = mysqli_query($tryconnection, $get_supplier) or die(mysqli_error($mysqli_link)) ;
 $row_supplier = mysqli_fetch_assoc($query_supplier) ;
 
 

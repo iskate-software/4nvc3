@@ -10,9 +10,9 @@ else {
 $startdate='00/00/0000';
 }
 $stdum = $startdate ;
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
@@ -23,149 +23,149 @@ $enddate=date('m/d/Y');
 }
 $enddum = $enddate ;
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
 $gethosp="SELECT HOSPNAME FROM CRITDATA" ;
-$Query_hosp = mysql_query($gethosp, $tryconnection) or die(mysql_error()) ;
+$Query_hosp = mysqli_query($tryconnection, $gethosp) or die(mysqli_error($mysqli_link)) ;
 $row_hosp = mysqli_fetch_array($Query_hosp) ;
 $hospname = $row_hosp['HOSPNAME'] ;
 
 $drop1 = "DROP TEMPORARY TABLE IF EXISTS DEBIT" ;
-$ex1 = mysql_query($drop1, $tryconnection) or die(mysql_error()) ;
+$ex1 = mysqli_query($tryconnection, $drop1) or die(mysqli_error($mysqli_link)) ;
 $drop2 = "DROP TEMPORARY TABLE IF EXISTS CHEQUE" ;
-$ex2 = mysql_query($drop2, $tryconnection) or die(mysql_error()) ;
+$ex2 = mysqli_query($tryconnection, $drop2) or die(mysqli_error($mysqli_link)) ;
 $drop3 = "DROP TEMPORARY TABLE IF EXISTS VISA" ;
-$ex3 = mysql_query($drop3, $tryconnection) or die(mysql_error()) ;
+$ex3 = mysqli_query($tryconnection, $drop3) or die(mysqli_error($mysqli_link)) ;
 $drop4 = "DROP TEMPORARY TABLE IF EXISTS MASTERC" ;
-$ex4 = mysql_query($drop4, $tryconnection) or die(mysql_error()) ;
+$ex4 = mysqli_query($tryconnection, $drop4) or die(mysqli_error($mysqli_link)) ;
 $drop5 = "DROP TEMPORARY TABLE IF EXISTS CASH" ;
-$ex5 = mysql_query($drop5, $tryconnection) or die(mysql_error()) ;
+$ex5 = mysqli_query($tryconnection, $drop5) or die(mysqli_error($mysqli_link)) ;
 $drop6 = "DROP TEMPORARY TABLE IF EXISTS CELL" ;
-$ex6 = mysql_query($drop6, $tryconnection) or die(mysql_error()) ;
+$ex6 = mysqli_query($tryconnection, $drop6) or die(mysqli_error($mysqli_link)) ;
 $drop7 = "DROP TEMPORARY TABLE IF EXISTS AMEX" ;
-$ex7 = mysql_query($drop7, $tryconnection) or die(mysql_error()) ;
+$ex7 = mysqli_query($tryconnection, $drop7) or die(mysqli_error($mysqli_link)) ;
 
 $Q1 = "DROP TABLE IF EXISTS  TEMPBANK" ;
-$exQ1 = mysql_query($Q1, $tryconnection) or die(mysql_error()) ;
+$exQ1 = mysqli_query($tryconnection, $Q1) or die(mysqli_error($mysqli_link)) ;
 
 $Q2 = "DROP TEMPORARY TABLE IF EXISTS HOLDING" ;
-$exQ2 = mysql_query($Q2, $tryconnection) or die(mysql_error()) ;
+$exQ2 = mysqli_query($tryconnection, $Q2) or die(mysqli_error($mysqli_link)) ;
 
 $Q3 = "CREATE table TEMPBANK LIKE BANKREC " ;
-$exQ3 = mysql_query($Q3, $tryconnection) or die(mysql_error()) ;
+$exQ3 = mysqli_query($tryconnection, $Q3) or die(mysqli_error($mysqli_link)) ;
 
 $Q4 = "CREATE TEMPORARY TABLE HOLDING LIKE CASHDEP " ;
-$exQ4 = mysql_query($Q4, $tryconnection) or die(mysql_error()) ;
+$exQ4 = mysqli_query($tryconnection, $Q4) or die(mysqli_error($mysqli_link)) ;
 
 $Q5 = "INSERT INTO HOLDING SELECT * FROM ARYCASH  WHERE DTEPAID >= '$startdate[0]' AND DTEPAID <= '$enddate[0]'" ;
-$exQ5 = mysql_query($Q5, $tryconnection) or die(mysql_error()) ;
+$exQ5 = mysqli_query($tryconnection, $Q5) or die(mysqli_error($mysqli_link)) ;
 
 $Q6 = "INSERT INTO HOLDING SELECT * FROM LASTCASH WHERE DTEPAID >= '$startdate[0]' AND DTEPAID <= '$enddate[0]'" ;
-$exQ6 = mysql_query($Q6, $tryconnection) or die(mysql_error()) ;
+$exQ6 = mysqli_query($tryconnection, $Q6) or die(mysqli_error($mysqli_link)) ;
 
 $Q7 = "INSERT INTO HOLDING SELECT * FROM CASHDEP  WHERE DTEPAID >= '$startdate[0]' AND DTEPAID <= '$enddate[0]'" ;
-$exQ7 = mysql_query($Q7, $tryconnection) or die(mysql_error()) ;
+$exQ7 = mysqli_query($tryconnection, $Q7) or die(mysqli_error($mysqli_link)) ;
 
 $Q8 = "INSERT INTO TEMPBANK (DATEOF) SELECT DISTINCT DTEPAID FROM HOLDING ORDER BY DTEPAID ASC" ;
-$exQ8 = mysql_query($Q8, $tryconnection) or die(mysql_error()) ;
+$exQ8 = mysqli_query($tryconnection, $Q8) or die(mysqli_error($mysqli_link)) ;
 
 $Q9 = "CREATE TEMPORARY TABLE DEBIT LIKE BANKREC" ;
-$exQ9 = mysql_query($Q9, $tryconnection) or die(mysql_error()) ;
+$exQ9 = mysqli_query($tryconnection, $Q9) or die(mysqli_error($mysqli_link)) ;
 
 $Q10 = "INSERT INTO DEBIT (DATEOF,DEBIT) SELECT DTEPAID, SUM(AMTPAID) FROM HOLDING WHERE REFNO = 'DCRD' GROUP BY DTEPAID"  ;
-$exQ10 = mysql_query($Q10, $tryconnection) or die(mysql_error()) ;
+$exQ10 = mysqli_query($tryconnection, $Q10) or die(mysqli_error($mysqli_link)) ;
 
 $Q11 = "UPDATE TEMPBANK RIGHT JOIN DEBIT ON TEMPBANK.DATEOF = DEBIT.DATEOF SET TEMPBANK.DEBIT = DEBIT.DEBIT" ;
-$exQ11 = mysql_query($Q11, $tryconnection) or die(mysql_error()) ;
+$exQ11 = mysqli_query($tryconnection, $Q11) or die(mysqli_error($mysqli_link)) ;
 
 $Q12 = "CREATE TEMPORARY TABLE CHEQUE LIKE BANKREC" ;
-$exQ12 = mysql_query($Q12, $tryconnection) or die(mysql_error()) ;
+$exQ12 = mysqli_query($tryconnection, $Q12) or die(mysqli_error($mysqli_link)) ;
 
 $Q13 = "INSERT INTO CHEQUE (DATEOF, CHQ) SELECT DTEPAID, SUM(AMTPAID) FROM HOLDING WHERE REFNO = 'CHEQUE' GROUP BY DTEPAID" ;
-$exQ13 = mysql_query($Q13, $tryconnection) or die(mysql_error()) ;
+$exQ13 = mysqli_query($tryconnection, $Q13) or die(mysqli_error($mysqli_link)) ;
 
 $Q14 = "UPDATE TEMPBANK RIGHT JOIN CHEQUE ON TEMPBANK.DATEOF = CHEQUE.DATEOF SET TEMPBANK.CHQ = CHEQUE.CHQ" ;
-$exQ14 = mysql_query($Q14, $tryconnection) or die(mysql_error()) ;
+$exQ14 = mysqli_query($tryconnection, $Q14) or die(mysqli_error($mysqli_link)) ;
 
 $Q15 = "CREATE TEMPORARY TABLE VISA LIKE BANKREC" ;
-$exQ15 = mysql_query($Q15, $tryconnection) or die(mysql_error()) ;
+$exQ15 = mysqli_query($tryconnection, $Q15) or die(mysqli_error($mysqli_link)) ;
 
 $Q16 = "INSERT INTO VISA (DATEOF, VISA) SELECT DTEPAID, SUM(AMTPAID) FROM HOLDING WHERE REFNO = 'VISA' GROUP BY DTEPAID" ;
-$exQ16 = mysql_query($Q16, $tryconnection) or die(mysql_error()) ;
+$exQ16 = mysqli_query($tryconnection, $Q16) or die(mysqli_error($mysqli_link)) ;
 
 $Q17 = "UPDATE TEMPBANK RIGHT JOIN VISA ON TEMPBANK.DATEOF = VISA.DATEOF SET TEMPBANK.VISA = VISA.VISA" ;
-$exQ17 = mysql_query($Q17, $tryconnection) or die(mysql_error()) ;
+$exQ17 = mysqli_query($tryconnection, $Q17) or die(mysqli_error($mysqli_link)) ;
 
 $Q18 = "CREATE TEMPORARY TABLE MASTERC LIKE BANKREC" ;
-$exQ18 = mysql_query($Q18, $tryconnection) or die(mysql_error()) ;
+$exQ18 = mysqli_query($tryconnection, $Q18) or die(mysqli_error($mysqli_link)) ;
 
 $Q19 = "INSERT INTO MASTERC (DATEOF, MC) SELECT DTEPAID, SUM(AMTPAID) FROM HOLDING WHERE REFNO = 'MC' GROUP BY DTEPAID" ;
-$exQ19 = mysql_query($Q19, $tryconnection) or die(mysql_error()) ;
+$exQ19 = mysqli_query($tryconnection, $Q19) or die(mysqli_error($mysqli_link)) ;
 
 $Q20 = "UPDATE TEMPBANK RIGHT JOIN MASTERC ON TEMPBANK.DATEOF = MASTERC.DATEOF SET TEMPBANK.MC = MASTERC.MC" ;
-$exQ20 = mysql_query($Q20, $tryconnection) or die(mysql_error()) ;
+$exQ20 = mysqli_query($tryconnection, $Q20) or die(mysqli_error($mysqli_link)) ;
 
 $Q21 = "CREATE TEMPORARY TABLE CASH LIKE BANKREC ";
-$exQ21 = mysql_query($Q21, $tryconnection) or die(mysql_error()) ;
+$exQ21 = mysqli_query($tryconnection, $Q21) or die(mysqli_error($mysqli_link)) ;
 
 $Q22 = "INSERT INTO CASH (DATEOF, CASH) SELECT DTEPAID, SUM(AMTPAID) FROM HOLDING WHERE REFNO = 'CASH' GROUP BY DTEPAID" ;
-$exQ22 = mysql_query($Q22, $tryconnection) or die(mysql_error()) ;
+$exQ22 = mysqli_query($tryconnection, $Q22) or die(mysqli_error($mysqli_link)) ;
 
 $Q23 = "UPDATE TEMPBANK RIGHT JOIN CASH ON TEMPBANK.DATEOF = CASH.DATEOF SET TEMPBANK.CASH = CASH.CASH" ;
-$exQ23 = mysql_query($Q23, $tryconnection) or die(mysql_error()) ;
+$exQ23 = mysqli_query($tryconnection, $Q23) or die(mysqli_error($mysqli_link)) ;
 
 $Q24 = "CREATE TEMPORARY TABLE CELL LIKE BANKREC ";
-$exQ24 = mysql_query($Q24, $tryconnection) or die(mysql_error()) ;
+$exQ24 = mysqli_query($tryconnection, $Q24) or die(mysqli_error($mysqli_link)) ;
 
 $Q25 = "INSERT INTO CASH (DATEOF, CELL) SELECT DTEPAID, SUM(AMTPAID) FROM HOLDING WHERE REFNO = 'CELL' GROUP BY DTEPAID" ;
-$exQ25 = mysql_query($Q25, $tryconnection) or die(mysql_error()) ;
+$exQ25 = mysqli_query($tryconnection, $Q25) or die(mysqli_error($mysqli_link)) ;
 
 $Q26 = "UPDATE TEMPBANK RIGHT JOIN CELL ON TEMPBANK.DATEOF = CELL.DATEOF SET TEMPBANK.CELL = CELL.CELL" ;
-$exQ26 = mysql_query($Q26, $tryconnection) or die(mysql_error()) ;
+$exQ26 = mysqli_query($tryconnection, $Q26) or die(mysqli_error($mysqli_link)) ;
 
 $Q27 = "DROP TABLE IF EXISTS ABANKREC" ;
-$exQ27 = mysql_query($Q27, $tryconnection) or die(mysql_error()) ;
+$exQ27 = mysqli_query($tryconnection, $Q27) or die(mysqli_error($mysqli_link)) ;
 
 $Q28 = "CREATE TABLE ABANKREC SELECT * FROM TEMPBANK GROUP BY DATEOF" ;
-$exQ28 = mysql_query($Q28, $tryconnection) or die(mysql_error()) ;
+$exQ28 = mysqli_query($tryconnection, $Q28) or die(mysqli_error($mysqli_link)) ;
 
 $Q29 = "SELECT * FROM ABANKREC ORDER BY DATEOF" ;
-$exQ29 = mysql_query($Q29, $tryconnection) or die(mysql_error()) ;
+$exQ29 = mysqli_query($tryconnection, $Q29) or die(mysqli_error($mysqli_link)) ;
 
 $Q30 = "SELECT SUM(DEBIT) AS DEBITTOT FROM ABANKREC" ;
-$exQ30 = mysql_query($Q30, $tryconnection) or die(mysql_error()) ;
+$exQ30 = mysqli_query($tryconnection, $Q30) or die(mysqli_error($mysqli_link)) ;
 $row_debit = mysqli_fetch_array($exQ30) ;
 $debittot = $row_debit['DEBITTOT'] ;
 
 $Q31 = "SELECT SUM(CASH) AS CASHTOT FROM ABANKREC" ;
-$exQ31 = mysql_query($Q31, $tryconnection) or die(mysql_error()) ;
+$exQ31 = mysqli_query($tryconnection, $Q31) or die(mysqli_error($mysqli_link)) ;
 $row_cash = mysqli_fetch_array($exQ31) ;
 $cashtot = $row_cash['CASHTOT'] ;
 
 $Q32 = "SELECT SUM(CHQ) AS CHQTOT FROM ABANKREC" ;
-$exQ32 = mysql_query($Q32, $tryconnection) or die(mysql_error()) ;
+$exQ32 = mysqli_query($tryconnection, $Q32) or die(mysqli_error($mysqli_link)) ;
 $row_chq = mysqli_fetch_array($exQ32) ;
 $chqtot = $row_chq['CHQTOT'] ;
 
 $Q33 = "SELECT SUM(VISA) AS VISATOT FROM ABANKREC" ;
-$exQ33 = mysql_query($Q33, $tryconnection) or die(mysql_error()) ;
+$exQ33 = mysqli_query($tryconnection, $Q33) or die(mysqli_error($mysqli_link)) ;
 $row_visa = mysqli_fetch_array($exQ33) ;
 $visatot = $row_visa['VISATOT'] ;
 
 $Q34 = "SELECT SUM(MC) AS MCTOT FROM ABANKREC" ;
-$exQ34 = mysql_query($Q34, $tryconnection) or die(mysql_error()) ;
+$exQ34 = mysqli_query($tryconnection, $Q34) or die(mysqli_error($mysqli_link)) ;
 $row_mc = mysqli_fetch_array($exQ34) ;
 $mctot = $row_mc['MCTOT'] ;
 
 $Q35 = "SELECT SUM(AMEX) AS AMEXTOT FROM ABANKREC" ;
-$exQ35 = mysql_query($Q35, $tryconnection) or die(mysql_error()) ;
+$exQ35 = mysqli_query($tryconnection, $Q35) or die(mysqli_error($mysqli_link)) ;
 $row_amex = mysqli_fetch_array($exQ35) ;
 $amextot = $row_amex['AMEXTOT'] ;
 
 $Q36 = "SELECT SUM(CELL) AS CELLTOT FROM ABANKREC" ;
-$exQ36 = mysql_query($Q36, $tryconnection) or die(mysql_error()) ;
+$exQ36 = mysqli_query($tryconnection, $Q36) or die(mysqli_error($mysqli_link)) ;
 $row_cell = mysqli_fetch_array($exQ36) ;
 $celltot = $row_cell['CELLTOT'] ;
 

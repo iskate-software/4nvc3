@@ -2,7 +2,7 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 if ($_GET[seq]!= '99') {
 $query_INVENTORY = "SELECT ITEMID,ITEM,DESCRIP,DISPFEE,ONHAND, SEQ,CLASS,VPARTNO,PKGQTY,COST,UPRICE,PRICE FROM ARINVT WHERE INSTR('$_GET[seq]',CLASS) <> 0 ORDER BY CLASS, DESCRIP"; 
 $query_tot = "SELECT SUM(ONHAND/PKGQTY*COST) AS TOTAL FROM ARINVT WHERE INSTR('$_GET[seq]',CLASS) <> 0" ;
@@ -11,11 +11,11 @@ else {
 $query_INVENTORY = "SELECT ITEMID,ITEM,DESCRIP,DISPFEE, ONHAND, SEQ,CLASS,VPARTNO,PKGQTY,COST,UPRICE,PRICE FROM ARINVT ORDER BY ITEM, DESCRIP";
 $query_tot = "SELECT SUM(ONHAND/PKGQTY*COST) AS TOTAL FROM ARINVT " ;
 }
-$INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
+$INVENTORY = mysqli_query($tryconnection, $query_INVENTORY) or die(mysqli_error($mysqli_link));
 $row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 
-$grand_tot = mysql_query($query_tot, $tryconnection) or die(mysql_error()) ;
+$grand_tot = mysqli_query($tryconnection, $query_tot) or die(mysqli_error($mysqli_link)) ;
 $row_tot = mysqli_fetch_assoc($grand_tot) ;
 
 

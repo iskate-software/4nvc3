@@ -11,9 +11,9 @@ else {
 $startdate='00/00/0000';
 }
 $stdum = $startdate ;
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 echo ' start ' . $startdate[0] ;
@@ -28,7 +28,7 @@ $enddate=date('m/d/Y');
 }
 $enddum = $enddate ;
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 echo ' end ' . $enddate[0] ;
 
@@ -37,7 +37,7 @@ $doc = $_GET['clinician2'] ;
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
 $gethosp="SELECT HOSPNAME FROM CRITDATA LIMIT 1" ;
-$Query_hosp = mysql_query($gethosp, $tryconnection) or die(mysql_error()) ;
+$Query_hosp = mysqli_query($tryconnection, $gethosp) or die(mysqli_error($mysqli_link)) ;
 $row_hosp = mysqli_fetch_array($Query_hosp) ;
 $hospname = $row_hosp['HOSPNAME'] ;
 
@@ -55,27 +55,27 @@ $search_ARINVOI= "SELECT  COMPANY,ITOTAL FROM FINALRANK WHERE ITOTAL > '$company
  if ($doc != "0") {$DOCONLY = "DELETE FROM RANKFINAL WHERE INVDOC <> '$doc' " ;}
 $search_SELECT = "SELECT SUM(ITOTAL) AS TOTAL,  COUNT(CUSTNO) AS COUNT FROM FINALRANK  WHERE ITOTAL > '$company' ";
 $search_TOTAL = "SELECT SUM(ITOTAL) AS TOTAL,  COUNT(CUSTNO) AS COUNT FROM FINALRANK  ";
-$Query_0 = mysql_query($search_SETUP0, $tryconnection) or die(mysql_error()) ;
-$Query_1 = mysql_query($search_SETUP1, $tryconnection) or die(mysql_error()) ;
-$Query_2 = mysql_query($search_SETUP2, $tryconnection) or die(mysql_error()) ;
+$Query_0 = mysqli_query($tryconnection, $search_SETUP0) or die(mysqli_error($mysqli_link)) ;
+$Query_1 = mysqli_query($tryconnection, $search_SETUP1) or die(mysqli_error($mysqli_link)) ;
+$Query_2 = mysqli_query($tryconnection, $search_SETUP2) or die(mysqli_error($mysqli_link)) ;
 //$Query_3 = mysql_query($search_SETUP3, $tryconnection) or die(mysql_error()) ;
 //$Query_4 = mysql_query($search_SETUP4, $tryconnection) or die(mysql_error()) ;
-$Query_5 = mysql_query($search_SETUP5, $tryconnection) or die(mysql_error()) ;
-$Query_6 = mysql_query($search_SETUP6, $tryconnection) or die(mysql_error()) ;
-$Query_7 = mysql_query($search_SETUP7, $tryconnection) or die(mysql_error()) ;
-$Query_8 = mysql_query($search_SETUP8, $tryconnection) or die(mysql_error()) ;
-$Query_9 = mysql_query($search_SETUP9, $tryconnection) or die(mysql_error()) ;
+$Query_5 = mysqli_query($tryconnection, $search_SETUP5) or die(mysqli_error($mysqli_link)) ;
+$Query_6 = mysqli_query($tryconnection, $search_SETUP6) or die(mysqli_error($mysqli_link)) ;
+$Query_7 = mysqli_query($tryconnection, $search_SETUP7) or die(mysqli_error($mysqli_link)) ;
+$Query_8 = mysqli_query($tryconnection, $search_SETUP8) or die(mysqli_error($mysqli_link)) ;
+$Query_9 = mysqli_query($tryconnection, $search_SETUP9) or die(mysqli_error($mysqli_link)) ;
 
 if ($doc != "0") {
- $Query_doc = mysql_query($DOCONLY, $tryconnection) or die(mysql_error()) ;
+ $Query_doc = mysqli_query($tryconnection, $DOCONLY) or die(mysqli_error($mysqli_link)) ;
 }
-$ARINVOI=mysql_query($search_ARINVOI, $tryconnection ) or die(mysql_error()) ;
+$ARINVOI=mysqli_query($tryconnection, $search_ARINVOI) or die(mysqli_error($mysqli_link)) ;
 $row_ARINVOI=mysqli_fetch_assoc($ARINVOI);
 
-$Query_TOT = mysql_query($search_TOTAL, $tryconnection) or die(mysql_error()) ;
+$Query_TOT = mysqli_query($tryconnection, $search_TOTAL) or die(mysqli_error($mysqli_link)) ;
 $row_TOT = mysqli_fetch_assoc($Query_TOT) ;
 
-$Query_SEL = mysql_query($search_SELECT, $tryconnection) or die(mysql_error()) ;
+$Query_SEL = mysqli_query($tryconnection, $search_SELECT) or die(mysqli_error($mysqli_link)) ;
 $row_SEL = mysqli_fetch_assoc($Query_SEL) ;
 
 

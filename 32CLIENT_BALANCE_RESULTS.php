@@ -3,7 +3,7 @@ session_start();
 require_once('../../tryconnection.php');
 include("../../ASSETS/tax.php");
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 if (!empty($_GET['startdate'])){
 $startdate=$_GET['startdate'];
 }
@@ -26,18 +26,18 @@ $endname ="Zz" ;
 }
 
 $startdate1="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate2=mysql_query($startdate1, $tryconnection) or die(mysql_error());
+$startdate2=mysqli_query($tryconnection, $startdate1) or die(mysqli_error($mysqli_link));
 $startdate3=mysqli_fetch_array($startdate2);
 
 $Round_about_midnight = "SELECT DATE_ADD('$startdate3[0]', INTERVAL '23:55' HOUR_MINUTE) AS LATER" ;
-$Bump_it = mysql_query($Round_about_midnight, $tryconnection) or die(mysql_error()) ;
+$Bump_it = mysqli_query($tryconnection, $Round_about_midnight) or die(mysqli_error($mysqli_link)) ;
 $Get_Bump = mysqli_fetch_assoc($Bump_it) ;
 $startdate3 = $Get_Bump['LATER'] ;
 
 echo $startdate3 ;
 
 $closemonth ="SELECT DATE_FORMAT('$startdate3', '%D %M %Y') " ;
-$clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
+$clm = mysqli_query($tryconnection, $closemonth) or die(mysqli_error($mysqli_link)) ;
 $clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 
@@ -54,18 +54,18 @@ $BALANCE2 = "CREATE TEMPORARY TABLE TAR1 (CUSTNO FLOAT(7),COMPANY VARCHAR(50),IN
 $search_ARCUSTO1 = "DROP TEMPORARY TABLE IF EXISTS CUSTBAL" ;
 $search_ARCUSTO2 = "CREATE TEMPORARY TABLE CUSTBAL (CUSTNO FLOAT(7), TITLE VARCHAR(25), COMPANY VARCHAR(50), CONTACT VARCHAR(50), CAREA CHAR(4), PHONE CHAR(8), CITY VARCHAR(50), CREDIT FLOAT(8,2), BALANCE FLOAT(8,2), OWING FLOAT(8,2))" ;
 $search_ARCUSTO3 = "INSERT INTO CUSTBAL (CUSTNO,TITLE,COMPANY,CONTACT,CAREA,PHONE,CITY,CREDIT,BALANCE) SELECT  CUSTNO,TITLE,COMPANY,CONTACT,CAREA,PHONE,CITY,CREDIT,BALANCE FROM ARCUSTO  ORDER BY CUSTNO" ;
-$ARCUSTO1 = mysql_query($search_ARCUSTO1, $tryconnection) or die(mysql_error()) ;
-$ARCUSTO2 = mysql_query($search_ARCUSTO2, $tryconnection) or die(mysql_error()) ;
-$ARCUSTO3 = mysql_query($search_ARCUSTO3, $tryconnection) or die(mysql_error()) ;
+$ARCUSTO1 = mysqli_query($tryconnection, $search_ARCUSTO1) or die(mysqli_error($mysqli_link)) ;
+$ARCUSTO2 = mysqli_query($tryconnection, $search_ARCUSTO2) or die(mysqli_error($mysqli_link)) ;
+$ARCUSTO3 = mysqli_query($tryconnection, $search_ARCUSTO3) or die(mysqli_error($mysqli_link)) ;
 
 $BALANCE3 = "UPDATE CUSTBAL SET BALANCE = 0 WHERE BALANCE <> 0" ;
 $BALANCE4 = "UPDATE CUSTBAL JOIN TAR1 USING (CUSTNO) SET CUSTBAL.BALANCE = TAR1.IBAL" ;
 $BALANCE5 = "UPDATE CUSTBAL SET BALANCE = BALANCE - CREDIT" ;
-$Q_Balance1 = mysql_query($BALANCE1, $tryconnection) or die(mysql_error());
-$Q_Balance2 = mysql_query($BALANCE2, $tryconnection) or die(mysql_error());
-$Q_Balance3 = mysql_query($BALANCE3, $tryconnection) or die(mysql_error());
-$Q_Balance4 = mysql_query($BALANCE4, $tryconnection) or die(mysql_error());
-$Q_Balance5 = mysql_query($BALANCE5, $tryconnection) or die(mysql_error());
+$Q_Balance1 = mysqli_query($tryconnection, $BALANCE1) or die(mysqli_error($mysqli_link));
+$Q_Balance2 = mysqli_query($tryconnection, $BALANCE2) or die(mysqli_error($mysqli_link));
+$Q_Balance3 = mysqli_query($tryconnection, $BALANCE3) or die(mysqli_error($mysqli_link));
+$Q_Balance4 = mysqli_query($tryconnection, $BALANCE4) or die(mysqli_error($mysqli_link));
+$Q_Balance5 = mysqli_query($tryconnection, $BALANCE5) or die(mysqli_error($mysqli_link));
 
 
 $search_ARINVOI1 = "DROP TEMPORARY TABLE IF EXISTS INVOICES" ;
@@ -81,16 +81,16 @@ $search_CASH3 = "INSERT INTO EXTRACASH SELECT CUSTNO, DTEPAID, INVNO,SUM(AMTPAID
 $search_CASH32 = "INSERT INTO EXTRACASH2 SELECT CUSTNO, DTEPAID, INVNO,SUM(AMTPAID) AS AMTPAID FROM ARCASHR WHERE DTEPAID > '$startdate3' AND CUSTNO <> 0 GROUP BY CUSTNO ASC ";
 
 
-$ARINVOI1 = mysql_query($search_ARINVOI1, $tryconnection) or die(mysql_error());
-$ARINVOI2 = mysql_query($search_ARINVOI2, $tryconnection) or die(mysql_error());
-$ARINVOI3 = mysql_query($search_ARINVOI3, $tryconnection) or die(mysql_error());
+$ARINVOI1 = mysqli_query($tryconnection, $search_ARINVOI1) or die(mysqli_error($mysqli_link));
+$ARINVOI2 = mysqli_query($tryconnection, $search_ARINVOI2) or die(mysqli_error($mysqli_link));
+$ARINVOI3 = mysqli_query($tryconnection, $search_ARINVOI3) or die(mysqli_error($mysqli_link));
  
-$CASH1 = mysql_query($search_CASH1, $tryconnection) or die(mysql_error());
-$CASH12 = mysql_query($search_CASH12, $tryconnection) or die(mysql_error());
-$CASH2 = mysql_query($search_CASH2, $tryconnection) or die(mysql_error());
-$CASH22 = mysql_query($search_CASH22, $tryconnection) or die(mysql_error());
-$CASH3 = mysql_query($search_CASH3, $tryconnection) or die(mysql_error());
-$CASH32 = mysql_query($search_CASH32, $tryconnection) or die(mysql_error());
+$CASH1 = mysqli_query($tryconnection, $search_CASH1) or die(mysqli_error($mysqli_link));
+$CASH12 = mysqli_query($tryconnection, $search_CASH12) or die(mysqli_error($mysqli_link));
+$CASH2 = mysqli_query($tryconnection, $search_CASH2) or die(mysqli_error($mysqli_link));
+$CASH22 = mysqli_query($tryconnection, $search_CASH22) or die(mysqli_error($mysqli_link));
+$CASH3 = mysqli_query($tryconnection, $search_CASH3) or die(mysqli_error($mysqli_link));
+$CASH32 = mysqli_query($tryconnection, $search_CASH32) or die(mysqli_error($mysqli_link));
  
 // now take out from the client file balances all the invoices which are beyond the selection date, and add the cash in to get the retroactive data.
 
@@ -98,9 +98,9 @@ $takeinvout = "UPDATE CUSTBAL JOIN INVOICES ON (CUSTBAL.CUSTNO = INVOICES.CUSTNO
 $takeoutcash = "UPDATE CUSTBAL JOIN EXTRACASH ON (CUSTBAL.CUSTNO = EXTRACASH.CUSTNO) SET CUSTBAL.BALANCE = CUSTBAL.BALANCE + EXTRACASH.AMTPAID  " ;
 $takeoutcash2 = "UPDATE CUSTBAL JOIN EXTRACASH2 ON (CUSTBAL.CUSTNO = EXTRACASH2.CUSTNO) SET CUSTBAL.BALANCE = CUSTBAL.BALANCE + EXTRACASH2.AMTPAID " ;
 
-$doinv = mysql_query($takeinvout, $tryconnection) or die(mysql_error()) ;
-$docash = mysql_query($takeoutcash, $tryconnection) or die(mysql_error()) ;
-$docash2 = mysql_query($takeoutcash2, $tryconnection) or die(mysql_error()) ;
+$doinv = mysqli_query($tryconnection, $takeinvout) or die(mysqli_error($mysqli_link)) ;
+$docash = mysqli_query($tryconnection, $takeoutcash) or die(mysqli_error($mysqli_link)) ;
+$docash2 = mysqli_query($tryconnection, $takeoutcash2) or die(mysqli_error($mysqli_link)) ;
 
 
 //penultimately, the net and gross figures for the summary.
@@ -108,8 +108,8 @@ $docash2 = mysql_query($takeoutcash2, $tryconnection) or die(mysql_error()) ;
 $BALANCE = "SELECT SUM(BALANCE + CREDIT) AS IBAL FROM CUSTBAL WHERE COMPANY >= TRIM('$startname') AND COMPANY <= TRIM('$endname') " ;
 $CREDIT = "SELECT SUM(CREDIT) AS CREDIT FROM CUSTBAL  WHERE COMPANY >= TRIM('$startname') AND COMPANY <= TRIM('$endname')" ;
 
-$NET = mysql_query($BALANCE, $tryconnection) or die(mysql_error()) ;
-$CREDIT1 = mysql_query($CREDIT, $tryconnection) or die(mysql_error()) ;
+$NET = mysqli_query($tryconnection, $BALANCE) or die(mysqli_error($mysqli_link)) ;
+$CREDIT1 = mysqli_query($tryconnection, $CREDIT) or die(mysqli_error($mysqli_link)) ;
 
 $row_NET = mysqli_fetch_assoc($NET) ;
 $row_CREDIT = mysqli_fetch_assoc($CREDIT1) ;
@@ -117,7 +117,7 @@ $row_CREDIT = mysqli_fetch_assoc($CREDIT1) ;
 // FINALLY, the alpha and numeric extract. 
 
 $CLIENT = "SELECT COMPANY,CONTACT,CITY,CAREA,PHONE,BALANCE,CREDIT, BALANCE-CREDIT AS OWING FROM CUSTBAL WHERE COMPANY >= TRIM('$startname') AND COMPANY <= TRIM('$endname') AND (BALANCE <> 0 OR CREDIT <> 0) ORDER BY COMPANY,CONTACT ASC" ;
-$get_CLIENT = mysql_query($CLIENT, $tryconnection) or die(mysql_error()) ;
+$get_CLIENT = mysqli_query($tryconnection, $CLIENT) or die(mysqli_error($mysqli_link)) ;
 
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/DVMBasicTemplate.dwt" codeOutsideHTMLIsLocked="false" -->

@@ -9,9 +9,9 @@ else {
 $startdate='00/00/0000';
 }
 $stdum = $startdate ;
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 if (!empty($_GET['enddate'])){
@@ -22,7 +22,7 @@ $enddate=date('m/d/Y');
 }
 $enddum = $enddate ;
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 
 $file2search=$_GET['file2search'];
@@ -37,7 +37,7 @@ if ($startdate == '0000-00-00') {
 if ($file2search=="All")  {
 
 $search_NARCPUR="SELECT ITEM,DESCRIP,SUM(QTY) AS QTY,SUM(QTYREM) AS QTYREM,DATEPURCH,LASTDATE,VENDOR,COMMENT FROM NARCPUR WHERE ((LASTDATE >= '$startdate[0]' AND LASTDATE <= '$enddate[0]') OR (DATEPURCH >= '$startdate[0]' AND DATEPURCH <= '$enddate[0]'))  $qtysrch GROUP BY ITEM,DATEPURCH WITH ROLLUP" ;
-$NARCPUR=mysql_query($search_NARCPUR, $tryconnection ) or die(mysql_error());
+$NARCPUR=mysqli_query($tryconnection, $search_NARCPUR) or die(mysqli_error($mysqli_link));
 $row_NARCPUR=mysqli_fetch_assoc($NARCPUR);
 }
 

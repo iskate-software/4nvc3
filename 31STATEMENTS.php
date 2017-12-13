@@ -2,7 +2,7 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $month_end = date('m')-1 . '/'. date('t',strtotime('last month')).'/'.date('Y') ;
 if (substr($month_end,1,1) == '/') {$month_end = '0'.$month_end ;}
@@ -10,7 +10,7 @@ if (substr($month_end,0,2) == '00') {$month_end = '12/31/' . date('Y') - 1 ;}
 $in_sql = substr($month_end,6,4) . '-' . substr($month_end,0,2) . '-' . substr($month_end,3,2) ;
 $prev_month = $in_sql ;
 $pre_sql = "SELECT DATE_SUB('$prev_month', interval 1 month) AS AA" ;
-$q_pm = mysql_query($pre_sql, $tryconnection) or die(mysql_error()) ;
+$q_pm = mysqli_query($tryconnection, $pre_sql) or die(mysqli_error($mysqli_link)) ;
 $row_pm = mysqli_fetch_assoc($q_pm) ;
 $pre_php = $row_pm['AA'] ;
 $prev_month = substr($pre_php,5,2) . '/' . substr($pre_php,8,2) . '/' . substr($pre_php,0,4) ;

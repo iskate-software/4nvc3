@@ -2,24 +2,24 @@
 
 session_start() ;
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 // get the appropriate dates 
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
-$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
+$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysqli_error($mysqli_link));
 $closedate=mysqli_fetch_array($closedate);
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%M %Y') " ;
-$clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
+$clm = mysqli_query($tryconnection, $closemonth) or die(mysqli_error($mysqli_link)) ;
 $clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 
 $DOC_SPLIT = "SELECT * FROM DOCTAB1" ;
-$get_doc = mysql_query($DOC_SPLIT, $tryconnection) or die(mysql_error()) ;
+$get_doc = mysqli_query($tryconnection, $DOC_SPLIT) or die(mysqli_error($mysqli_link)) ;
 
 $CRITDATA = "SELECT HOSPNAME FROM CRITDATA LIMIT 1" ;
-$get_crit = mysql_query($CRITDATA, $tryconnection) or die(mysql_error()) ;
+$get_crit = mysqli_query($tryconnection, $CRITDATA) or die(mysqli_error($mysqli_link)) ;
 $row_Crit = mysqli_fetch_assoc($get_crit) ;
 $hospname = $row_Crit['HOSPNAME'] ;
 

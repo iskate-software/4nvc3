@@ -2,22 +2,22 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $LIMIT1 = "SELECT FIRSTINV FROM PREFER LIMIT 1" ;
-$DOIT1 = mysql_query($LIMIT1, $tryconnection ) or die(mysql_error()) ;
+$DOIT1 = mysqli_query($tryconnection, $LIMIT1) or die(mysqli_error($mysqli_link)) ;
 $FIRSTINV = mysqli_fetch_array($DOIT1);
 
 $LIMIT2 = "SELECT LASTINV FROM PREFER LIMIT 1" ;
-$DOIT2 = mysql_query($LIMIT2, $tryconnection ) or die(mysql_error()) ;
+$DOIT2 = mysqli_query($tryconnection, $LIMIT2) or die(mysqli_error($mysqli_link)) ;
 $LASTINV = mysqli_fetch_array($DOIT2);
 
 $query_closedate="SELECT STR_TO_DATE('$_GET[closedate]','%m/%d/%Y')";
-$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysql_error());
+$closedate= mysql_unbuffered_query($query_closedate, $tryconnection) or die(mysqli_error($mysqli_link));
 $closedate=mysqli_fetch_array($closedate);
 
 $closemonth ="SELECT DATE_FORMAT('$closedate[0]', '%D %M %Y') " ;
-$clm = mysql_query($closemonth, $tryconnection) or die(mysql_error()) ;
+$clm = mysqli_query($tryconnection, $closemonth) or die(mysqli_error($mysqli_link)) ;
 $clm1 = mysqli_fetch_array($clm) ;
 $clm2 = $clm1[0] ;
 /*
@@ -34,12 +34,12 @@ $PREP3 = mysql_query($SETUP3, $tryconnection) or die(mysql_error()) ;
 // first, the dogs.
 
 $CANINE = "SELECT INVMAJ, INVORDDOC, SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND INVLGSM = 1 GROUP BY INVMAJ, INVORDDOC WITH ROLLUP" ;
-$CANPRT = mysql_query($CANINE, $tryconnection) or die(mysql_error()) ;
+$CANPRT = mysqli_query($tryconnection, $CANINE) or die(mysqli_error($mysqli_link)) ;
 $row_CANINE = mysqli_fetch_assoc($CANPRT) ;
 
 
 $CANDET = "SELECT INVMAJ,INVTNO,INVDESC, INVORDDOC, SUM(INVTOT) AS INVTOT FROM MSALES WHERE INVMAJ < 90 AND INVLGSM = 1 GROUP BY INVMAJ,INVTNO,INVORDDOC WITH ROLLUP" ;
-$CANDETPRT = mysql_query($CANDET, $tryconnection) or die(mysql_error()) ;
+$CANDETPRT = mysqli_query($tryconnection, $CANDET) or die(mysqli_error($mysqli_link)) ;
 $row_CANDET = mysqli_fetch_assoc($CANDETPRT) ;
 
 
@@ -50,7 +50,7 @@ $row_CANDET = mysqli_fetch_assoc($CANDETPRT) ;
 
 
   $query_CRITDATA = "SELECT HGST,HOGST,HGSTDATE,HTAXNAME,HOTAXNAME FROM CRITDATA LIMIT 1" ;
-  $CRITDATA = mysql_query($query_CRITDATA, $tryconnection) or die(mysql_error());
+  $CRITDATA = mysqli_query($tryconnection, $query_CRITDATA) or die(mysqli_error($mysqli_link));
   $row_CRITDATA = mysqli_fetch_assoc($CRITDATA);
   $date2 = date("Y-m-d",time());
   if ($date2 >= $row_CRITDATA['HGSTDATE']) {
@@ -125,7 +125,7 @@ Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_CANINE['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE FROM VETCAN WHERE TSPECIES='1' AND TCATGRY='".$row_CANINE['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
 	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	} ?></td>
@@ -222,7 +222,7 @@ Detailed Revenue Analysis (
     <td height="18"></td>
     <td class="Verdana12B"><?php if ($row_CANDET['INVMAJ']!=$xxx) { 
 	$query_TFF="SELECT TTYPE,TDESCR FROM VETCAN WHERE TSPECIES='1' AND TCATGRY='".$row_CANDET['INVMAJ']."' LIMIT 1";
-	$TFF = mysql_query($query_TFF, $tryconnection) or die(mysql_error());
+	$TFF = mysqli_query($tryconnection, $query_TFF) or die(mysqli_error($mysqli_link));
 	$row_TFF = mysqli_fetch_assoc($TFF);
 	echo $row_TFF['TTYPE'];
 	$lookup = 0 ;

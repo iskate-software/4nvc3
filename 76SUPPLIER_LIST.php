@@ -2,14 +2,14 @@
 session_start();
 require_once('../../tryconnection.php');
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 
 $_SESSION['supplier'] = $_GET['supplier'] ;
 $reqsupplier = $_SESSION['supplier'] ;
 
 
 $query_INVENTORY = "SELECT * FROM ARINVT WHERE SUPPLIER = '$reqsupplier' ORDER BY VPARTNO"; 
-$INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
+$INVENTORY = mysqli_query($tryconnection, $query_INVENTORY) or die(mysqli_error($mysqli_link));
 $row_INVENTORY = mysqli_fetch_assoc($INVENTORY);
 
 

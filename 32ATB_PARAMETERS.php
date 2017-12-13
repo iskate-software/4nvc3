@@ -3,7 +3,7 @@
 // first, the shenanigans to get the invoice date, and the service charge cutoff dates
 
 require_once('../../tryconnection.php');
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 echo ' Begun ' ;
 /*
 $GETIT_invdte= "SELECT DATE_FORMAT(NOW(),'%m/%d/%Y') AS INVDATE" ;

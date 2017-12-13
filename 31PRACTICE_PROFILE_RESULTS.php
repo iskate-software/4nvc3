@@ -11,9 +11,9 @@ else {
 $startdate='00/00/0000';
 }
 $stdum = $startdate ;
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 $startdate="SELECT STR_TO_DATE('$startdate','%m/%d/%Y')";
-$startdate=mysql_query($startdate, $tryconnection) or die(mysql_error());
+$startdate=mysqli_query($tryconnection, $startdate) or die(mysqli_error($mysqli_link));
 $startdate=mysqli_fetch_array($startdate);
 
 echo ' start ' . $startdate[0] ;
@@ -26,21 +26,21 @@ $enddate=date('m/d/Y');
 }
 $enddum = $enddate ;
 $enddate="SELECT STR_TO_DATE('$enddate','%m/%d/%Y')";
-$enddate=mysql_query($enddate, $tryconnection) or die(mysql_error());
+$enddate=mysqli_query($tryconnection, $enddate) or die(mysqli_error($mysqli_link));
 $enddate=mysqli_fetch_array($enddate);
 echo ' end ' . $enddate[0] ;
 $taxname=taxname($database_tryconnection, $tryconnection, date('m/d/Y')); 
 
 $gethosp="SELECT HOSPNAME FROM CRITDATA LIMIT 1" ;
-$Query_hosp = mysql_query($gethosp, $tryconnection) or die(mysql_error()) ;
+$Query_hosp = mysqli_query($tryconnection, $gethosp) or die(mysqli_error($mysqli_link)) ;
 $row_hosp = mysqli_fetch_array($Query_hosp) ;
 $hospname = $row_hosp['HOSPNAME'] ;
 
 $search_SETUP0 = "SELECT DATE_FORMAT(LASTCLOSE, '%m/%d/%Y') AS DATE,CLIENTS,CLIENTS2 AS CLIENTS1YR,CLIENTS3 AS CLIENTS2YR,PATIENTS AS TOTAL_PNT,ACTIVEPAT AS PNT_2YR, ACTPAT3 AS PNT_1YR,INVSALES AS SALES, INVOICE, ROUND(INVSALES/INVOICE,2) AS AVG, CASHREC AS INCOME,GST+PST AS TAX FROM PRACTICE WHERE LASTCLOSE >= '$startdate[0]' AND LASTCLOSE <= '$enddate[0]' ORDER BY LASTCLOSE" ;
 $search_TOTAL = "SELECT SUM(INVSALES) AS TOTAL, SUM(CASHREC) AS TOTALCASH, SUM(GST + PST) AS TAX FROM PRACTICE WHERE LASTCLOSE >= '$startdate[0]' AND LASTCLOSE <= '$enddate[0]' ";
 
-$Query_0 = mysql_query($search_SETUP0, $tryconnection) or die(mysql_error()) ;
-$Query_1 = mysql_query($search_TOTAL, $tryconnection) or die(mysql_error()) ;
+$Query_0 = mysqli_query($tryconnection, $search_SETUP0) or die(mysqli_error($mysqli_link)) ;
+$Query_1 = mysqli_query($tryconnection, $search_TOTAL) or die(mysqli_error($mysqli_link)) ;
 $row_Q0 = mysqli_fetch_assoc($Query_0) ;
 $row_Q1 = mysqli_fetch_assoc($Query_1) ;
 

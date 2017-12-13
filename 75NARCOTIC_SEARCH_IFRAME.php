@@ -15,10 +15,10 @@ if (!empty($_GET['sorting'])){
 $sortby = $_GET['sorting'];
 }
 
-mysql_select_db($database_tryconnection, $tryconnection);
+mysqli_select_db($tryconnection, $database_tryconnection);
 //$query_INVENTORY = sprintf("SELECT * FROM ARINVT WHERE ITEM LIKE '%s' AND DESCRIP LIKE '%s' AND VPARTNO LIKE '%s' AND BARCODE LIKE '%s' AND GOVNARC = 1  ORDER BY ".$sortby." ASC", $item.'%', $description.'%', $vpartno.'%', $barcode.'%');
 $query_INVENTORY = "SELECT ITEMID,ITEM,DESCRIP,VPARTNO,SUPPLIER,CODE,SEQ,COST,PKGQTY,COMMENT,BARCODE,MEMO FROM ARINVT WHERE  GOVNARC = 1  ORDER BY ITEM ASC";
-$INVENTORY = mysql_query($query_INVENTORY, $tryconnection) or die(mysql_error());
+$INVENTORY = mysqli_query($tryconnection, $query_INVENTORY) or die(mysqli_error($mysqli_link));
 //$row_INVENTORY = mysql_fetch_assoc($INVENTORY);
 //$totalRows_INVENTORY = mysql_num_rows($INVENTORY);
 
